@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RR Clutch Intelligence Engine | IPL 2027 Auction War Room Dossier</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Proprietary Quantitative Decision-Support System for Rajasthan Royals IPL 2027 Mega-Auction. High-leverage win probability modeling across 195,000+ deliveries.">
+<meta name="author" content="Sahil Sawant | RR Quantitative Strategy & Cricket Operations">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Rajasthan Royals Premium Brand Palette */
+  --rr-navy: #091124;
+  --rr-navy-surf: #101c38;
+  --rr-navy-card: #162447;
+  --rr-navy-border: #233560;
+  --rr-navy-hover: #1e305e;
+  
+  --rr-pink: #E10174;
+  --rr-pink-light: #FF2E93;
+  --rr-pink-soft: rgba(225, 1, 116, 0.14);
+  --rr-pink-glow: rgba(225, 1, 116, 0.35);
+  
+  --rr-blue: #2563EB;
+  --rr-blue-soft: rgba(37, 99, 235, 0.12);
+  --rr-steel: #818CF8;
+  --rr-gold: #F59E0B;
+  --rr-gold-soft: rgba(245, 158, 11, 0.15);
+  --rr-teal: #10B981;
+  --rr-teal-soft: rgba(16, 185, 129, 0.15);
+  --rr-warn: #F43F5E;
+  
+  --bg: #F8FAFC;
+  --surf: #FFFFFF;
+  --surf-alt: #F1F5F9;
+  --card-bg: #FFFFFF;
+  --ink: #0F172A;
+  --ink-secondary: #334155;
+  --mute: #64748B;
+  --line: #E2E8F0;
+  --line-strong: #CBD5E1;
+  
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #070D1E;
+  --surf: #0D162E;
+  --surf-alt: #132042;
+  --card-bg: #111C3A;
+  --ink: #F8FAFC;
+  --ink-secondary: #E2E8F0;
+  --mute: #94A3B8;
+  --line: #1E2D54;
+  --line-strong: #2B3D6E;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
+  
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #070D1E;
+    --surf: #0D162E;
+    --surf-alt: #132042;
+    --card-bg: #111C3A;
+    --ink: #F8FAFC;
+    --ink-secondary: #E2E8F0;
+    --mute: #94A3B8;
+    --line: #1E2D54;
+    --line-strong: #2B3D6E;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* Header & Official War-Room Banner */
+.masthead {
+  background: linear-gradient(135deg, #0A1128 0%, #152044 60%, #1E2952 100%);
+  color: #FFFFFF;
+  border-radius: 14px;
+  padding: 26px 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(10, 17, 40, 0.35);
+}
+.masthead::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, var(--rr-pink) 0%, transparent 70%);
+  opacity: 0.28;
+  filter: blur(40px);
+  pointer-events: none;
+}
+.masthead::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rr-pink) 0%, var(--rr-gold) 50%, var(--rr-blue) 100%);
+}
+
+.masthead-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.badge-club {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(225, 1, 116, 0.16);
+  border: 1px solid rgba(225, 1, 116, 0.4);
+  color: #FFA4D1;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.badge-club svg { width: 14px; height: 14px; fill: currentColor; }
+
+.masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-util {
+  background: rgba(255, 255, 255, 0.08);
+  color: #E2E8F0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font: 600 12px var(--font-sans);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.btn-util:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+}
+
+.masthead h1 {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.masthead h1 span {
+  color: var(--rr-pink-light);
+}
+.masthead-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #CBD5E1;
+  max-width: 820px;
+  margin-bottom: 16px;
+}
+.meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: #94A3B8;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+.meta-strip strong { color: #FFFFFF; font-weight: 600; }
+.meta-strip .dot-sep { color: rgba(255, 255, 255, 0.3); }
+
+/* Navigation Tabs */
+.nav-wrap {
+  position: sticky;
+  top: 10px;
+  z-index: 50;
+  background: var(--bg);
+  padding: 4px 0 14px;
+  margin-bottom: 10px;
+}
+nav.tab-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  scrollbar-width: none;
+}
+nav.tab-strip::-webkit-scrollbar { display: none; }
+nav.tab-strip button {
+  font: 600 13px var(--font-sans);
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--mute);
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.15s ease;
+}
+nav.tab-strip button:hover {
+  color: var(--ink);
+  background: var(--surf-alt);
+}
+nav.tab-strip button[aria-selected="true"] {
+  background: var(--rr-pink);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px var(--rr-pink-glow);
+}
+nav.tab-strip button .tab-icon {
+  font-size: 14px;
+}
+
+/* Strategic KPIs */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent, var(--rr-pink));
+}
+.kpi-val {
+  font: 800 24px/1.1 var(--font-mono);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mute);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.kpi-sub {
+  font-size: 11.5px;
+  color: var(--mute);
+  margin-top: 4px;
+}
+
+/* Layout Grids & Panels */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+.grid-rank {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .grid-rank { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 18px;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title .badge-sub {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--surf-alt);
+  color: var(--mute);
+}
+
+/* Tactical Strategy Callout Boxes */
+.callout-box {
+  background: var(--surf-alt);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--rr-pink);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.callout-box.info { border-left-color: var(--rr-blue); }
+.callout-box.gold { border-left-color: var(--rr-gold); }
+.callout-box.teal { border-left-color: var(--rr-teal); }
+.callout-box b { color: var(--ink); }
+
+/* Tactical Preset Weight Buttons */
+.preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 16px;
+}
+.preset-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mute);
+  margin-right: 4px;
+}
+.btn-preset {
+  font: 600 11.5px var(--font-sans);
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  background: var(--surf);
+  color: var(--ink-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-preset:hover {
+  background: var(--rr-pink-soft);
+  color: var(--rr-pink);
+  border-color: var(--rr-pink);
+}
+
+/* Interactive Sliders */
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  background: var(--surf-alt);
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-bottom: 14px;
+}
+.slider-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.slider-group label b {
+  font-family: var(--font-mono);
+  color: var(--rr-pink);
+}
+input[type=range] {
+  width: 100%;
+  accent-color: var(--rr-pink);
+  cursor: pointer;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--mute);
+  margin-bottom: 12px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--c);
+}
+
+/* Roster Rows */
+.roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.roster-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 64px;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--surf);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.roster-row:hover {
+  background: var(--surf-alt);
+  border-color: var(--line);
+}
+.roster-row[aria-selected="true"] {
+  background: var(--rr-pink-soft);
+  border-color: rgba(225, 1, 116, 0.4);
+}
+.roster-rank {
+  font: 800 15px var(--font-mono);
+  color: var(--mute);
+  text-align: center;
+}
+.roster-row[aria-selected="true"] .roster-rank {
+  color: var(--rr-pink);
+}
+.roster-name {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.roster-team {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surf-alt);
+  color: var(--mute);
+  margin-left: 6px;
+}
+.roster-role {
+  font-size: 11px;
+  color: var(--mute);
+  margin-left: 6px;
+}
+.roster-delta {
+  font: 700 11px var(--font-mono);
+  margin-left: 6px;
+}
+.roster-delta.up { color: var(--rr-teal); }
+.roster-delta.down { color: var(--rr-warn); }
+
+.bar-stack {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--line);
+  margin-top: 6px;
+}
+.bar-stack i { display: block; height: 100%; transition: width 0.2s ease; }
+.roster-score {
+  font: 800 15px/1 var(--font-mono);
+  text-align: right;
+  color: var(--ink);
+}
+
+/* Detail Player Card */
+.player-dossier {
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  position: sticky;
+  top: 74px;
+}
+.dossier-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.dossier-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.dossier-meta {
+  font-size: 12.5px;
+  color: var(--mute);
+  margin-top: 2px;
+}
+.dossier-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+.stat-pill {
+  background: var(--surf-alt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+.stat-pill b {
+  font: 800 18px/1 var(--font-mono);
+  color: var(--ink);
+  display: block;
+  margin-bottom: 3px;
+}
+.stat-pill span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mute);
+  text-transform: uppercase;
+}
+
+/* Comparison Metric Pairs */
+.comp-metric {
+  margin: 12px 0;
+  background: var(--surf-alt);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.comp-metric-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.comp-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  margin: 4px 0;
+}
+.comp-bar-row em {
+  font-style: normal;
+  width: 65px;
+  color: var(--mute);
+  font-weight: 600;
+}
+.comp-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.comp-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.comp-bar-val {
+  font: 700 12px var(--font-mono);
+  width: 44px;
+  text-align: right;
+  color: var(--ink);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+table.data-table th {
+  background: var(--surf-alt);
+  padding: 10px 12px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+table.data-table th:hover {
+  background: var(--line);
+}
+table.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+table.data-table tr:last-child td { border-bottom: none; }
+table.data-table tr:hover td {
+  background: var(--surf-alt);
+}
+table.data-table .num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* Badges & Tags */
+.tag-badge {
+  font: 700 11px var(--font-sans);
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.tag-badge.pink { background: var(--rr-pink-soft); color: var(--rr-pink); border: 1px solid rgba(225,1,116,0.3); }
+.tag-badge.blue { background: var(--rr-blue-soft); color: var(--rr-blue); border: 1px solid rgba(37,99,235,0.3); }
+.tag-badge.gold { background: var(--rr-gold-soft); color: #B45309; border: 1px solid rgba(245,158,11,0.3); }
+.tag-badge.teal { background: var(--rr-teal-soft); color: #047857; border: 1px solid rgba(16,185,129,0.3); }
+.tag-badge.gray { background: var(--surf-alt); color: var(--mute); border: 1px solid var(--line); }
+
+/* Emerging Cards */
+.scout-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.scout-card {
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: all 0.2s ease;
+}
+.scout-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--rr-pink);
+}
+.scout-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.scout-score {
+  font: 800 20px var(--font-mono);
+  color: var(--rr-pink);
+}
+.scout-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.scout-role {
+  font-size: 12px;
+  color: var(--mute);
+}
+
+/* Head-to-Head Compare UI */
+.compare-selector-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+  background: var(--surf-alt);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) {
+  .compare-selector-bar { grid-template-columns: 1fr; }
+}
+.select-input {
+  width: 100%;
+  padding: 10px 14px;
+  font: 600 13px var(--font-sans);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surf);
+  color: var(--ink);
+  outline: none;
+}
+.select-input:focus {
+  border-color: var(--rr-pink);
+  box-shadow: 0 0 0 2px var(--rr-pink-soft);
+}
+.vs-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--rr-pink);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 13px var(--font-mono);
+  margin: 0 auto;
+  box-shadow: 0 2px 8px var(--rr-pink-glow);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
+.compare-card {
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+/* SVG Chart Elements */
+.chart-container {
+  margin: 12px 0;
+  background: var(--surf);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  padding: 12px;
+}
+svg text {
+  font-family: var(--font-sans);
+  fill: var(--mute);
+}
+.scatter-dot {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.scatter-dot:hover {
+  filter: drop-shadow(0 0 6px var(--rr-pink));
+}
+.scatter-dot.selected {
+  stroke: var(--ink) !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 8px var(--rr-pink)) !important;
+}
+.scatter-dot.dimmed {
+  opacity: 0.15 !important;
+}
+table.data-table tr.selected td {
+  background: var(--rr-pink-soft) !important;
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+}
+
+
+/* Bootstrap Resample Range Bar */
+.resample-track {
+  position: relative;
+  height: 10px;
+  background: var(--line);
+  border-radius: 5px;
+  min-width: 130px;
+}
+.resample-range {
+  position: absolute;
+  top: 0;
+  height: 10px;
+  background: var(--rr-steel);
+  border-radius: 5px;
+}
+.resample-median {
+  position: absolute;
+  top: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--rr-pink);
+  margin-left: -7px;
+  border: 2px solid var(--surf);
+}
+
+/* Search Box */
+.search-box {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surf);
+  color: var(--ink);
+  font: 13px var(--font-sans);
+  min-width: 220px;
+  outline: none;
+}
+.search-box:focus {
+  border-color: var(--rr-pink);
+  box-shadow: 0 0 0 2px var(--rr-pink-soft);
+}
+
+/* Footer */
+footer.dossier-footer {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  font-size: 12px;
+  color: var(--mute);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Print Stylesheet for Competition Submission */
+@media print {
+  body { background: #FFFFFF; color: #000000; font-size: 12px; }
+  .nav-wrap, .btn-util, .masthead-actions, .sliders-grid, .preset-bar { display: none !important; }
+  .shell { max-width: 100%; padding: 0; }
+  .panel { border: 1px solid #CCCCCC; box-shadow: none; break-inside: avoid; }
+  .masthead { background: #0F172A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <div class="badge-club">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Rajasthan Royals // SupeRR Selector Season 2
+      </div>
+      <div class="masthead-actions">
+        <a href="SupeRR_Selector_Methodology_Report.html" target="_blank" class="btn-util" style="text-decoration:none">
+          Methodology Report (Doc)
+        </a>
+        <button class="btn-util" id="themeBtn" aria-label="Toggle Theme">
+          <span id="themeText">Theme</span>
+        </button>
+        <button class="btn-util" id="printBtn" aria-label="Print or Export PDF Dossier">
+          Print / Export Dossier
+        </button>
+      </div>
+    </div>
+    
+    <h1>Rajasthan Royals <span>Clutch Intelligence Engine</span></h1>
+    <div style="font-size:13px;font-weight:700;color:var(--rr-pink-light);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase">
+      Round 1 Submission: Identify the Most Reliable Players Under Pressure
+    </div>
+    <p class="masthead-desc">
+      A quantitative decision-support system evaluating 119 elite T20 cricketers in match-defining, high-leverage situations. Built from 195,124 deliveries across 818 IPL and T20 International fixtures (2022–2026) to diagnose RR's tactical vulnerabilities and engineer a championship squad at the IPL 2027 Mega-Auction.
+    </p>
+    
+    <div class="meta-strip">
+      <span><strong>Author:</strong> Sahil Sawant (Cricket Strategy & Quantitative Analytics)</span>
+      <span class="dot-sep">•</span>
+      <span><strong>Target Event:</strong> IPL 2027 Mega-Auction Planning</span>
+      <span class="dot-sep">•</span>
+      <span><strong>Framework:</strong> Multi-Pillar Win Probability Added (WPA-LI Engine)</span>
+      <span class="dot-sep">•</span>
+      <span><strong>Status:</strong> Pre-Auction Strategy Brief</span>
+    </div>
+  </header>
+
+  <!-- Sticky Tab Navigation -->
+  <div class="nav-wrap">
+    <nav class="tab-strip" role="tablist" id="mainTabs"></nav>
+  </div>
+
+  <!-- Dynamic Main Content Area -->
+  <main id="viewContainer"></main>
+
+  <!-- Dossier Footer -->
+  <footer class="dossier-footer">
+    <div>
+      <strong>RR Cricket Operations & Strategy Group</strong> • Prepared for Auction War-Room Think Tank.
+      <br>Methodology: Ball-by-ball gradient boosted Win Probability swing (Top 20% leverage cutoff per innings).
+    </div>
+    <div style="text-align:right">
+      <span>Confidential Tactical Intelligence</span> • <em>Sawai Mansingh Stadium / Jaipur Strategy Cell</em>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/**
+ * OFFICIAL RR CLUTCH VALUATION DATASET
+ * Calibrated from 818 T20 matches (357 IPL + 461 International T20s, 2022 to Nov 2026)
+ */
+const D={"young":[["Vaibhav Sooryavanshi","bat","RR",63,53,4,2025,42.4,52.8,4.1,66.8,77.3],["Eshan Malinga","bowl","SRH",177,77,12,2024,52.3,10.7,12.6,48.7,65.1],["Sakib Hussain","bowl","SRH",51,51,3,2026,28.9,3.6,17.1,61.2,64.8],["Priyansh Arya","bat","PBKS",48,34,5,2025,24.6,17.9,24.8,61.7,63.0],["Sameer Rizvi","bat","DC",68,68,4,2024,74.7,-8.9,19.4,58.5,59.6],["Prashant Veer","bat","CSK",38,38,4,2026,19.4,1.5,14.7,66.8,58.7],["Hrithik Shokeen","bowl","Not in a 2026 squad",43,43,3,2022,18.1,-20.1,44.1,61.2,58.3],["Prabhsimran Singh","bat","PBKS",114,113,10,2022,21.6,6.3,12.4,61.2,57.1],["Naman Dhir","bat","MI",160,116,15,2024,46.5,5.7,16.4,52.2,56.1],["Rasikh Salam","bowl","RCB",109,75,8,2022,8.5,5.2,-8.3,48.3,54.7],["Mukul Choudhary","bat","LSG",26,26,2,2026,50.0,11.0,-19.7,50.2,52.7],["Shivang Kumar","bowl","SRH",51,51,3,2026,14.4,-17.4,18.8,52.1,52.3],["Gurjapneet Singh","bowl","CSK",44,19,3,2025,5.8,-4.8,17.5,43.0,51.9]],"rr":{"bat":[["Vaibhav Sooryavanshi",2,63],["Riyan Parag",33,303],["Shimron Hetmyer",34,455],["Shubham Dubey",38,65],["Yashasvi Jaiswal",38,152],["Ravindra Jadeja",39,385],["Jofra Archer",43,61],["Sam Curran",43,275],["Dhruv Jurel",45,309],["Dasun Shanaka",48,350],["Donovan Ferreira",48,106]],"bowl":[["Dasun Shanaka",6,110],["Adam Milne",19,117],["Jofra Archer",19,236],["Kuldeep Sen",22,62],["Tushar Deshpande",37,244],["Ravindra Jadeja",40,187],["Ravi Bishnoi",43,561],["Brijesh Sharma",46,78],["Sandeep Sharma",52,282],["Kwena Maphaka",60,67],["Sam Curran",61,340]],"n":{"bat":55,"bowl":64}},"bat":[["Shreyas Iyer",335,266,18,3.05,0.3,1.58,2.61,78.2,0.93,[180.0,148.0,3.3,4.3,34.0,61.0],"PBKS",105.4,9.8,33.2,69.3,1,"RHB",4.0],["Tim David",475,288,35,1.61,2.17,-0.16,2.69,74.4,0.95,[186.0,171.0,5.7,4.6,66.0,47.0],"RCB",59.7,30.0,3.9,69.8,2,"RHB",6.0],["Heinrich Klaasen",355,318,24,1.11,1.22,0.46,2.02,67.6,0.71,[189.0,160.0,5.4,3.6,47.0,42.0],"SRH",43.8,19.8,14.4,65.7,3,"RHB",5.0],["Ishan Kishan",229,210,15,1.5,0.17,1.15,1.24,64.6,0.55,[167.0,144.0,6.6,4.3,23.0,72.0],"SRH",56.3,8.4,26.1,60.9,4,"LHB",3.0],["Azmatullah Omarzai",170,38,16,1.11,-0.67,2.87,0.82,61.9,0.35,[198.0,118.0,7.1,6.3,77.0,11.0],"PBKS",43.8,-0.7,55.0,58.4,5,"RHB",6.0],["Abhishek Sharma",135,107,13,0.03,2.98,-0.51,0.63,61.6,0.33,[186.0,187.0,7.4,5.3,5.0,90.0],"SRH",9.7,38.7,-1.9,57.2,6,"LHB",2.0],["Venkatesh Iyer",214,185,16,1.04,-0.1,1.44,0.82,60.6,0.34,[173.0,141.0,6.5,4.3,50.0,38.0],"RCB",41.6,5.5,31.0,58.4,7,"LHB",4.0],["Cameron Green",236,153,16,0.32,0.66,0.37,1.51,59.8,0.33,[154.0,153.0,3.8,3.8,43.0,44.0],"KKR",18.7,13.7,12.9,62.6,8,"RHB",4.0],["Ashutosh Sharma",145,139,14,1.94,0.03,1.0,-0.55,59.7,0.35,[193.0,147.0,6.9,5.7,96.0,59.0],"DC",70.2,6.9,23.6,50.1,9,"RHB",7.0],["Jos Buttler",243,187,18,0.98,0.56,-0.14,0.71,58.9,0.37,[175.0,154.0,5.8,3.6,44.0,53.0],"GT",39.7,12.6,4.3,57.8,10,"RHB",2.0],["Jitesh Sharma",345,287,29,1.18,-0.8,1.24,0.56,57.5,0.33,[172.0,148.0,6.1,6.3,52.0,43.0],"RCB",45.9,-2.1,27.6,56.8,11,"RHB",6.0],["Daryl Mitchell",242,43,18,0.15,0.38,0.27,1.35,57.3,0.12,[160.0,144.0,5.8,4.8,50.0,41.0],"—",13.3,10.6,11.3,61.6,12,"RHB",5.0],["Naman Dhir",160,116,15,1.19,-0.08,0.58,-0.19,56.1,0.29,[189.0,158.0,5.0,6.2,59.0,37.0],"MI",46.5,5.7,16.4,52.2,13,"RHB",6.0],["Virat Kohli",305,258,19,0.36,0.47,-0.36,0.97,56.0,0.25,[155.0,144.0,3.6,2.9,31.0,64.0],"RCB",20.0,11.6,0.7,59.3,14,"RHB",2.0],["David Miller",476,407,34,1.0,-0.14,0.24,0.23,55.7,0.25,[158.0,143.0,4.0,3.7,58.0,52.0],"DC",40.4,5.1,10.7,54.8,15,"LHB",5.0],["Nicholas Pooran",435,322,33,0.13,0.53,0.25,0.45,54.5,0.22,[170.0,154.0,3.9,4.9,49.0,50.0],"LSG",12.7,12.3,10.9,56.1,16,"LHB",5.0],["Shubman Gill",260,229,18,0.97,0.17,0.27,-0.55,54.0,0.21,[168.0,148.0,4.6,3.5,25.0,77.0],"GT",39.3,8.4,11.2,50.1,17,"RHB",2.0],["Liam Livingstone",282,167,23,-0.32,0.62,-0.92,1.3,53.2,0.05,[150.0,156.0,8.5,4.3,41.0,37.0],"SRH",-1.5,13.3,-8.8,61.3,18,"RHB",5.0],["Sanju Samson",314,201,22,-0.46,0.29,0.22,1.09,53.0,0.11,[157.0,155.0,5.1,4.5,34.0,49.0],"CSK",-5.9,9.7,10.4,60.1,19,"RHB",3.0],["Rinku Singh",398,327,32,0.53,0.71,-0.1,-0.55,52.9,0.15,[162.0,147.0,5.3,3.4,63.0,28.0],"KKR",25.4,14.2,4.9,50.0,20,"LHB",6.0],["Romario Shepherd",259,59,26,-0.63,2.26,0.67,-1.04,52.6,null,[147.0,161.0,6.9,5.2,76.0,25.0],"RCB",-11.5,31.0,18.0,47.1,21,"RHB",7.0],["Suryakumar Yadav",374,248,27,0.02,1.34,0.13,-0.79,52.3,null,[186.0,164.0,5.6,4.0,41.0,64.0],"MI",9.4,21.0,8.9,48.6,22,"RHB",4.0],["Krunal Pandya",190,190,12,0.36,-2.04,1.44,1.1,51.5,null,[154.0,116.0,4.2,5.4,64.0,44.0],"RCB",20.1,-15.5,30.9,60.1,23,"LHB",5.0],["Tristan Stubbs",314,242,22,-0.56,0.26,-0.27,1.09,51.4,null,[165.0,141.0,5.1,3.6,60.0,46.0],"DC",-9.2,9.4,2.1,60.1,24,"RHB",5.0],["Rashid Khan",206,95,16,-0.35,0.66,0.16,0.14,51.4,null,[171.0,142.0,11.7,6.3,100.0,34.0],"GT",-2.5,13.7,9.4,54.2,25,"RHB",8.0],["Namboori Tilak Varma",619,358,50,0.58,0.11,-0.46,-0.27,51.3,null,[160.0,138.0,5.2,2.7,44.0,60.0],"MI",27.1,7.7,-1.1,51.8,26,"LHB",5.0],["Shivam Dube",458,335,30,-0.16,0.63,-0.06,-0.12,50.8,null,[141.0,159.0,4.6,4.6,55.0,37.0],"CSK",3.5,13.3,5.6,52.7,27,"LHB",6.0],["Lokesh Rahul",286,286,20,0.06,0.37,-0.17,-0.55,49.3,null,[163.0,138.0,5.2,2.8,42.0,60.0],"DC",10.4,10.5,3.8,50.1,28,"RHB",2.0],["Sikandar Raza",251,64,20,0.01,-0.45,0.94,-0.55,48.5,null,[163.0,127.0,6.4,4.4,49.0,54.0],"—",9.0,1.7,22.5,50.1,29,"RHB",5.0],["Ayush Badoni",300,297,26,-0.09,-0.66,0.7,-0.07,48.5,null,[151.0,135.0,6.3,5.1,70.0,27.0],"LSG",5.6,-0.6,18.4,53.0,30,"RHB",6.0],["Shahbaz Ahmed",170,170,13,0.76,-1.8,1.73,-0.94,47.8,null,[142.0,114.0,4.7,4.9,71.0,27.0],"LSG",32.7,-12.9,35.9,47.7,31,"LHB",6.0],["M Shahrukh Khan",152,152,15,0.5,-0.66,-0.96,-0.19,47.5,null,[164.0,146.0,6.6,6.3,82.0,32.0],"GT",24.5,-0.6,-9.5,52.2,32,"RHB",7.0],["Riyan Parag",303,292,22,-0.06,-0.01,-0.21,-0.55,47.3,null,[160.0,148.0,7.9,4.3,54.0,50.0],"RR",6.8,6.4,3.1,50.1,33,"RHB",4.0],["Shimron Hetmyer",455,346,40,0.12,-0.16,0.58,-1.24,47.0,null,[158.0,146.0,5.9,5.8,73.0,32.0],"RR",12.5,4.8,16.5,45.9,34,"LHB",5.0],["Abdul Samad",165,165,12,-0.11,-0.93,-0.14,0.28,46.9,null,[164.0,142.0,6.7,6.6,76.0,22.0],"LSG",5.3,-3.6,4.4,55.1,35,"RHB",7.0],["Washington Sundar",219,134,16,-0.31,-0.34,-0.63,0.14,46.5,null,[138.0,141.0,7.3,4.5,62.0,54.0],"GT",-1.2,2.9,-4.0,54.2,36,"LHB",6.0],["Marcus Stoinis",289,200,19,-0.18,0.38,-0.5,-0.85,46.5,null,[167.0,147.0,7.3,4.3,65.0,32.0],"PBKS",3.0,10.7,-1.7,48.2,37,"RHB",6.0],["Yashasvi Jaiswal",152,142,13,-0.61,0.24,-0.55,-0.16,46.2,null,[162.0,154.0,7.2,4.1,13.0,84.0],"RR",-10.9,9.1,-2.5,52.5,38,"LHB",1.0],["Ravindra Jadeja",385,309,30,-0.31,-0.72,0.16,-0.12,45.9,null,[142.0,129.0,4.4,3.8,69.0,32.0],"RR",-1.4,-1.2,9.3,52.7,39,"LHB",6.0],["Nitish Reddy",152,117,15,-0.25,0.07,-0.91,-0.91,44.0,null,[159.0,148.0,5.9,4.8,38.0,30.0],"SRH",0.7,7.3,-8.6,47.9,40,"RHB",5.0],["Pathum Nissanka",201,32,12,-0.93,-0.03,0.0,-0.55,43.5,null,[149.0,134.0,7.0,3.8,20.0,99.0],"DC",-20.9,6.2,6.7,50.1,41,"RHB",1.0],["Sherfane Rutherford",208,102,14,-0.86,-0.58,0.74,-0.55,43.4,null,[165.0,141.0,3.4,6.3,52.0,55.0],"MI",-18.8,0.3,19.2,50.1,42,"LHB",5.0],["Sam Curran",275,173,21,-0.1,-1.19,0.09,-0.83,42.7,null,[142.0,123.0,6.5,5.3,57.0,43.0],"RR",5.5,-6.3,8.2,48.3,43,"LHB",5.0],["Rovman Powell",417,133,29,-0.99,-0.09,0.13,-0.78,42.5,null,[174.0,135.0,6.0,4.9,65.0,35.0],"KKR",-22.8,5.5,8.9,48.7,44,"RHB",6.0],["Dhruv Jurel",309,303,23,-0.75,-0.95,0.11,-0.29,42.3,null,[171.0,140.0,4.5,5.0,62.0,61.0],"RR",-15.1,-3.8,8.5,51.7,45,"RHB",5.0],["Hardik Pandya",576,340,43,-0.79,-0.31,-0.26,-0.72,42.1,null,[148.0,138.0,5.2,4.1,59.0,40.0],"MI",-16.5,3.2,2.3,49.1,46,"RHB",5.0],["Nehal Wadhera",171,135,13,-0.84,-1.43,-0.69,0.63,41.7,null,[137.0,131.0,7.0,5.3,30.0,68.0],"PBKS",-18.1,-8.9,-5.0,57.2,47,"LHB",5.0],["Rajat Patidar",175,175,16,-1.33,1.43,-2.59,-0.55,41.2,null,[174.0,166.0,9.1,3.6,35.0,37.0],"RCB",-33.7,22.1,-37.0,50.1,48,"RHB",4.0],["Sai Sudharsan",198,198,16,-0.57,0.25,-1.3,-1.23,41.1,null,[140.0,149.0,5.1,2.7,20.0,82.0],"GT",-9.6,9.3,-15.3,45.9,49,"LHB",3.0],["Rahul Tewatia",241,241,16,-0.72,-1.28,0.22,-0.55,40.6,null,[168.0,133.0,6.2,5.8,86.0,60.0],"GT",-14.2,-7.3,10.3,50.1,50,"LHB",6.0],["Rishabh Pant",275,245,20,-0.84,-1.01,-1.07,-1.14,36.2,null,[148.0,140.0,6.2,4.2,37.0,37.0],"LSG",-18.2,-4.4,-11.4,46.5,51,"LHB",4.0],["Axar Patel",499,294,37,-1.43,-1.18,-0.7,-1.1,33.7,null,[152.0,130.0,6.4,5.4,62.0,35.0],"DC",-36.8,-6.2,-5.1,46.7,52,"LHB",7.0],["Aiden Markram",201,150,20,-1.36,-0.36,-1.61,-1.72,32.9,null,[137.0,143.0,8.0,4.0,30.0,64.0],"LSG",-34.4,2.7,-20.4,42.9,53,"RHB",4.0],["Mitchell Marsh",204,122,15,-1.9,0.96,-2.88,-1.62,32.5,null,[131.0,160.0,6.4,4.1,17.0,88.0],"LSG",-51.7,16.9,-41.9,43.6,54,"RHB",3.0],["Wanindu Hasaranga",158,38,16,-2.79,-2.27,-1.6,-0.55,23.3,null,[135.0,120.0,12.7,8.8,73.0,25.0],"LSG",-79.8,-18.0,-20.3,50.1,55,"RHB",7.0]],"bowl":[["Jasprit Bumrah",422,343,37,1.14,1.72,1.33,1.54,69.6,0.91,[7.2,6.9,7.1,4.0,73.0,36.0],"MI",35.2,17.8,15.4,59.4,1,"Right-arm Fast",null],["Sunil Narine",300,300,31,1.4,1.57,0.84,1.42,68.9,0.79,[6.7,6.8,6.3,3.7,35.0,65.0],"KKR",44.6,16.2,6.4,58.3,2,"Right-arm offbreak",null],["Josh Hazlewood",314,208,29,2.26,0.46,0.27,1.17,67.1,0.55,[7.9,8.1,8.3,5.8,61.0,54.0],"RCB",74.8,5.0,-3.9,56.0,3,"Right-arm fast-medium",null],["Eshan Malinga",177,77,12,1.62,1.02,1.18,0.36,65.1,0.35,[8.2,8.6,5.1,5.6,53.0,53.0],"SRH",52.3,10.7,12.6,48.7,4,"Right-arm fast-medium",null],["Varun Chakravarthy",362,233,36,0.64,1.01,0.74,1.69,64.0,0.51,[7.7,7.8,6.9,6.1,29.0,59.0],"KKR",17.5,10.6,4.6,60.8,5,"Right-arm Leg-Break",null],["Axar Patel",415,207,39,1.45,-0.74,2.34,1.26,63.7,0.55,[7.3,7.9,6.3,4.0,26.0,56.0],"DC",46.3,-7.1,33.4,56.9,6,"Slow left-arm orthodox",null],["Krunal Pandya",285,285,25,1.42,0.32,1.19,0.92,63.7,0.59,[7.4,7.7,5.6,4.0,9.0,57.0],"RCB",45.2,3.6,12.7,53.7,7,"Slow left-arm orthodox",null],["Kuldeep Yadav",454,335,41,1.01,0.2,1.41,1.45,63.6,0.56,[7.4,7.9,6.6,5.9,39.0,45.0],"DC",30.6,2.4,16.7,58.6,8,"Left-arm Chinaman",null],["Wanindu Hasaranga",360,191,32,0.82,1.01,0.42,1.26,62.7,0.53,[8.9,7.5,7.2,6.4,42.0,55.0],"LSG",23.9,10.5,-1.0,56.8,9,"Right-arm Leg-Break",null],["Nathan Ellis",243,89,20,1.02,1.61,0.19,0.4,62.3,0.43,[9.0,7.5,7.4,5.4,69.0,48.0],"CSK",31.1,16.7,-5.3,49.0,10,"Right-arm medium",null],["Matheesha Pathirana",375,295,27,0.27,1.58,0.52,0.89,61.0,0.35,[8.5,7.5,7.2,6.0,77.0,41.0],"KKR",4.5,16.3,0.7,53.5,11,"Right-arm Fast",null],["Harshit Rana",186,123,18,2.0,-0.72,0.42,0.82,60.9,0.4,[9.2,9.1,9.1,5.3,65.0,71.0],"KKR",65.6,-6.9,-1.2,52.8,12,"Right-arm medium-fast",null],["Mustafizur Rahman",479,138,40,0.57,1.63,0.24,0.22,59.7,0.33,[8.7,7.0,7.1,4.0,78.0,34.0],"KKR",15.0,16.9,-4.4,47.4,13,"Left-arm medium",null],["Joshua Little",136,36,17,0.21,0.55,-0.31,1.93,59.0,0.17,[8.6,7.7,5.1,5.5,64.0,29.0],"—",2.2,5.9,-14.2,62.9,14,"Left-arm Fast",null],["Patrick Cummins",197,152,16,1.06,-0.0,0.4,0.84,58.9,0.26,[9.4,8.9,4.6,4.7,58.0,50.0],"SRH",32.4,0.3,-1.5,53.1,15,"Right-arm Fast",null],["FazalHaq Farooqi",213,47,24,1.12,-0.87,0.55,1.44,58.6,0.23,[9.0,7.7,4.7,4.3,78.0,45.0],"—",34.6,-8.5,1.2,58.5,16,"Left-arm medium",null],["Rashid Khan",513,355,52,0.48,0.95,-0.17,0.46,56.8,0.21,[7.9,7.2,7.0,5.2,46.0,49.0],"GT",11.7,9.9,-11.7,49.6,17,"Right-arm Leg-Break",null],["Jason Holder",540,173,49,0.11,0.72,-0.03,0.94,56.2,0.16,[9.1,8.3,6.1,5.1,68.0,42.0],"GT",-1.2,7.6,-9.3,53.9,18,"Right-arm medium-fast",null],["Jofra Archer",236,154,22,1.1,-0.16,-0.14,0.41,55.9,0.13,[9.1,8.6,7.2,5.1,72.0,42.0],"RR",33.9,-1.3,-11.3,49.1,19,"Right-arm Fast",null],["Maheesh Theekshana",269,101,26,0.86,-0.19,0.92,0.1,55.8,0.13,[7.1,7.6,6.3,3.7,52.0,43.0],"—",25.4,-1.5,7.9,46.3,20,"Right-arm offbreak",null],["Kagiso Rabada",309,238,29,0.66,-0.39,1.4,0.28,55.8,null,[8.5,8.9,7.8,4.7,62.0,46.0],"GT",18.4,-3.5,16.5,47.9,21,"Right-arm Fast",null],["Avesh Khan",484,408,46,0.96,-2.03,2.13,0.86,55.0,null,[8.9,9.4,6.6,4.3,72.0,55.0],"LSG",28.8,-20.1,29.6,53.2,22,"Right-arm medium",null],["Bhuvneshwar Kumar",498,372,45,0.24,0.61,-0.2,0.55,54.8,null,[9.1,7.6,7.2,4.4,83.0,42.0],"RCB",3.3,6.5,-12.3,50.4,23,"Right-arm medium",null],["Lockie Ferguson",241,173,26,0.58,0.04,0.4,0.1,54.1,null,[8.8,8.4,6.6,4.9,60.0,49.0],"PBKS",15.5,0.8,-1.5,46.3,24,"Right-arm Fast",null],["Adam Zampa",251,32,26,0.64,-0.69,1.0,0.1,53.1,null,[7.5,8.5,7.6,5.0,47.0,34.0],"—",17.3,-6.7,9.3,46.3,25,"Right-arm Leg-Break",null],["Mohsin Khan",181,181,19,0.08,1.58,-1.9,0.19,52.6,null,[9.0,7.8,5.5,5.6,55.0,55.0],"LSG",-2.3,16.3,-42.9,47.2,26,"Left-arm medium-fast",null],["Yuzvendra Chahal",563,461,53,0.36,0.13,0.55,-0.35,52.2,null,[9.3,8.0,6.7,5.2,42.0,55.0],"PBKS",7.7,1.7,1.3,42.2,27,"Right-arm Leg-Break",null],["Kartik Tyagi",140,140,12,0.61,-1.76,1.56,0.36,51.3,null,[8.5,10.4,7.9,3.0,62.0,39.0],"KKR",16.4,-17.4,19.4,48.7,28,"Right-arm medium-fast",null],["Nuwan Thushara",146,30,16,0.99,-0.2,-0.49,-0.53,51.3,null,[10.4,8.0,3.4,4.6,92.0,10.0],"RCB",30.0,-1.7,-17.5,40.6,29,"Right-arm medium-fast",null],["Lungi Ngidi",151,83,14,-0.59,0.88,-0.0,-0.13,49.8,null,[8.7,8.6,6.6,5.2,72.0,25.0],"DC",-26.0,9.3,-8.7,44.2,30,"Right-arm Fast",null],["Khaleel Ahmed",220,206,22,-0.26,0.34,-0.81,0.41,49.7,null,[11.2,7.9,7.7,4.3,75.0,26.0],"CSK",-14.4,3.8,-23.2,49.1,31,"Left-arm medium",null],["Mitchell Santner",236,105,20,-0.56,1.06,-1.38,0.4,49.5,null,[8.1,7.1,4.2,5.0,36.0,58.0],"MI",-25.0,11.1,-33.6,49.0,32,"Slow left-arm orthodox",null],["Dushmantha Chameera",261,96,25,-0.63,0.48,-1.22,0.92,49.2,null,[9.4,8.1,5.4,4.8,79.0,34.0],"DC",-27.5,5.2,-30.6,53.7,33,"Right-arm Fast",null],["Mukesh Kumar",332,222,27,0.29,-0.76,-0.29,0.27,49.1,null,[10.1,9.3,5.4,4.9,74.0,41.0],"DC",5.3,-7.3,-13.8,47.8,34,"Right-arm Fast",null],["Romario Shepherd",394,84,35,0.38,-2.35,1.33,0.57,48.5,null,[9.7,9.8,6.3,4.5,54.0,41.0],"RCB",8.4,-23.3,15.3,50.5,35,"Right-arm fast-medium",null],["Cameron Green",196,144,20,0.48,-1.33,0.65,-0.38,47.7,null,[8.7,9.2,4.6,4.2,36.0,45.0],"KKR",11.7,-13.1,3.0,41.9,36,"Right-arm medium",null],["Tushar Deshpande",244,233,24,0.03,-0.51,0.01,-0.27,47.4,null,[9.8,8.9,7.0,4.3,61.0,56.0],"RR",-4.0,-4.8,-8.6,42.9,37,"Right-arm medium",null],["Marco Jansen",233,216,24,-0.17,-1.02,1.28,-0.27,47.3,null,[10.1,9.0,5.2,3.7,53.0,50.0],"PBKS",-11.3,-10.0,14.4,42.9,38,"Left-arm medium-fast",null],["Ravindra Jadeja",187,185,21,-0.3,0.54,-0.0,-0.92,47.2,null,[9.2,7.5,3.2,4.3,6.0,66.0],"RR",-15.7,5.8,-8.7,37.0,39,"Slow left-arm orthodox",null],["Harshal Patel",516,407,44,-0.46,0.52,-0.27,-0.61,46.9,null,[9.7,8.3,6.0,5.4,64.0,59.0],"SRH",-21.4,5.6,-13.5,39.9,40,"Right-arm medium-fast",null],["Trent Boult",246,215,28,-0.47,-0.03,-1.1,0.42,46.8,null,[9.5,7.9,5.3,4.4,59.0,53.0],"MI",-21.9,0.0,-28.5,49.3,41,"Left-arm fast-medium",null],["Noor Ahmad",323,240,29,-0.91,1.1,-0.89,-0.61,45.4,null,[8.4,7.5,5.3,5.5,43.0,49.0],"CSK",-37.3,11.5,-24.6,39.8,42,"Left-arm Chinaman",null],["Ravi Bishnoi",561,342,52,-0.66,0.19,-0.91,-0.27,44.6,null,[9.3,7.6,4.1,5.3,34.0,70.0],"RR",-28.4,2.3,-25.1,42.9,43,"Right-arm Leg-Break",null],["Arshdeep Singh",806,444,78,-0.68,0.44,-1.47,-0.17,44.6,null,[9.9,8.1,6.3,5.3,74.0,48.0],"PBKS",-29.1,4.8,-35.1,43.9,44,"Left-arm medium-fast",null],["Rahul Chahar",190,178,17,-1.18,-0.42,0.27,0.17,44.0,null,[9.2,7.8,5.8,3.0,40.0,68.0],"CSK",-46.9,-3.8,-3.9,46.9,45,"Right-arm Leg-Break",null],["Anrich Nortje",178,131,15,-0.19,-2.06,0.53,0.14,43.5,null,[10.8,9.7,4.5,4.0,84.0,28.0],"LSG",-11.9,-20.4,0.9,46.7,46,"Right-arm Fast",null],["Mohammed Siraj",320,319,30,-0.57,0.13,-0.87,-1.02,42.4,null,[9.6,8.1,5.9,4.0,59.0,50.0],"GT",-25.4,1.7,-24.4,36.1,47,"Right-arm medium-fast",null],["Azmatullah Omarzai",232,82,26,-1.31,0.6,-1.26,-0.23,42.3,null,[10.7,7.7,5.2,4.8,47.0,67.0],"PBKS",-51.5,6.4,-31.3,43.3,48,"Right-arm medium-fast",null],["Prince Yadav",160,121,16,-0.86,0.68,-1.23,-0.99,42.2,null,[10.8,8.2,2.5,4.3,58.0,38.0],"LSG",-35.5,7.2,-30.8,36.4,49,"Right-arm Fast",null],["T Natarajan",311,311,23,-0.78,-0.51,-0.09,-0.83,41.4,null,[10.0,8.9,5.8,4.3,77.0,28.0],"DC",-32.8,-4.8,-10.3,37.8,50,"Left-arm medium",null],["Sandeep Sharma",282,282,26,-1.18,-0.05,0.05,-0.87,41.2,null,[10.6,7.8,6.7,2.6,82.0,33.0],"RR",-47.0,-0.1,-7.7,37.4,51,"Right-arm medium-fast",null],["Jaydev Unadkat",109,109,12,-1.49,-0.05,0.52,-0.74,41.2,null,[9.9,9.4,6.4,4.5,56.0,44.0],"SRH",-57.9,-0.1,0.7,38.7,52,"Left-arm medium-fast",null],["Vyshak Kumar",116,97,12,-0.24,-1.5,0.75,-1.29,40.8,null,[9.8,10.0,6.9,3.9,77.0,36.0],"PBKS",-13.5,-14.8,4.8,33.7,53,"Right-arm medium",null],["Prasidh Krishna",281,256,26,-1.06,1.16,-0.89,-1.84,40.6,null,[10.9,8.0,6.4,5.4,58.0,49.0],"GT",-42.9,12.1,-24.7,28.6,54,"Right-arm medium-fast",null],["Shardul Thakur",278,274,25,-1.18,-0.85,-0.37,-0.08,40.2,null,[9.6,9.5,5.4,5.1,62.0,42.0],"MI",-47.1,-8.3,-15.4,44.6,55,"Right-arm medium",null],["Suyash Sharma",170,160,14,-0.73,-1.09,0.01,-1.12,38.8,null,[9.0,8.2,3.5,3.5,25.0,49.0],"RCB",-31.1,-10.7,-8.4,35.1,56,"Right-arm Leg-Break",null],["Washington Sundar",114,55,16,-0.98,0.59,-1.11,-1.9,38.4,null,[11.4,7.4,1.8,5.2,52.0,47.0],"GT",-39.8,6.3,-28.7,28.1,57,"Right-arm offbreak",null],["Marcus Stoinis",202,88,25,-1.71,-0.87,-0.81,0.25,37.9,null,[10.7,8.7,7.9,5.0,45.0,68.0],"PBKS",-65.6,-8.4,-23.2,47.7,58,"Right-arm medium",null],["Mitchell Starc",141,116,16,-0.94,-0.86,-0.98,-0.99,37.0,null,[10.7,9.1,10.6,5.9,77.0,36.0],"DC",-38.6,-8.3,-26.3,36.4,59,"Left-arm Fast",null],["Hardik Pandya",381,178,39,-0.5,-0.72,-0.43,-2.24,36.4,null,[9.9,8.2,4.5,4.4,41.0,50.0],"MI",-22.8,-6.9,-16.5,25.0,60,"Right-arm medium-fast",null],["Sam Curran",340,176,35,-0.91,-0.54,-1.16,-1.48,36.2,null,[10.0,8.8,5.6,3.7,70.0,41.0],"RR",-37.4,-5.1,-29.5,31.9,61,"Left-arm medium-fast",null],["Xavier Bartlett",130,40,15,-1.39,-2.22,-0.14,-0.81,32.5,null,[8.7,9.3,3.8,4.0,68.0,28.0],"PBKS",-54.5,-22.0,-11.2,38.0,62,"Right-arm fast-medium",null],["Mohammed Shami",225,218,29,-1.38,0.05,-2.31,-2.39,30.4,null,[11.2,7.8,6.7,5.0,67.0,31.0],"LSG",-54.1,0.9,-50.3,23.6,63,"Right-arm Fast",null],["Vaibhav Arora",199,186,18,-2.64,0.01,-2.11,-2.14,25.4,null,[11.4,8.5,4.5,5.0,62.0,61.0],"KKR",-98.5,0.4,-46.7,25.9,64,"Right-arm Fast",null]],"ov":{"rrr":[["<6","6-8","8-10","10-12","12-15",">15"],[0.4,0.91,1.8,1.68,1.06,0.6]],"phase":[[0.58,0.74,1.17],[1.01,1.08,1.87]],"wk":[0.83,1.15,1.22,1.49,1.22,1.16,1.06,0.9,0.85,0.8],"val":{"Strike rate":[136.65,156.78,135.61,146.58],"Batter dismissals per 100 balls":[4.8,7.5,5.33,6.37],"Bowler economy":[8.18,9.32,8.13,8.74],"Bowler wickets per 100 balls":[4.54,6.62,5.04,5.88]},"kpi":{"matches":818,"ipl":357,"balls":195124,"pressure":39026,"players":[55,64]}},"boot":{"bat":[["Shreyas Iyer",2.0,1.0,5.0,0.93,0.89],["Tim David",3.0,1.0,9.0,0.95,0.75],["Heinrich Klaasen",7.0,3.0,18.0,0.71,0.35],["Ishan Kishan",7.0,2.0,23.0,0.55,0.28],["Azmatullah Omarzai",8.0,3.0,26.0,0.35,0.17],["Abhishek Sharma",9.0,3.0,23.0,0.33,0.17],["Venkatesh Iyer",12.0,5.0,26.0,0.34,0.12],["Cameron Green",13.0,5.0,32.0,0.33,0.13],["Ashutosh Sharma",10.0,1.0,34.0,0.35,0.22],["Jos Buttler",15.0,4.0,34.0,0.37,0.15],["Jitesh Sharma",16.0,4.0,39.0,0.33,0.17],["Daryl Mitchell",16.0,10.0,29.0,0.12,0.04],["Naman Dhir",16.0,4.0,36.0,0.29,0.15],["Virat Kohli",18.0,7.0,34.0,0.25,0.07],["David Miller",18.0,6.0,36.0,0.25,0.09],["Nicholas Pooran",19.0,8.0,35.0,0.22,0.04],["Shubman Gill",20.0,7.0,38.0,0.21,0.08],["Liam Livingstone",24.0,12.0,40.0,0.05,0.01],["Sanju Samson",22.0,10.0,38.0,0.11,0.01],["Rinku Singh",21.0,8.0,37.0,0.15,0.02]],"bowl":[["Jasprit Bumrah",4.0,1.0,9.0,0.91,0.63],["Sunil Narine",4.0,1.0,14.0,0.79,0.61],["Josh Hazlewood",8.0,1.0,28.0,0.55,0.43],["Eshan Malinga",7.0,1.0,24.0,0.35,0.22],["Varun Chakravarthy",10.0,3.0,20.0,0.51,0.27],["Axar Patel",10.0,4.0,20.0,0.55,0.23],["Krunal Pandya",8.0,3.0,22.0,0.59,0.27],["Kuldeep Yadav",9.0,3.0,19.0,0.56,0.27],["Wanindu Hasaranga",10.0,3.0,22.0,0.53,0.25],["Nathan Ellis",11.0,2.0,30.0,0.43,0.27],["Matheesha Pathirana",13.0,4.0,25.0,0.35,0.15],["Harshit Rana",13.0,2.0,34.0,0.4,0.25],["Mustafizur Rahman",15.0,4.0,29.0,0.33,0.15],["Joshua Little",16.0,6.0,34.0,0.17,0.06],["Patrick Cummins",15.0,5.0,34.0,0.26,0.1],["FazalHaq Farooqi",18.0,6.0,38.0,0.23,0.07],["Rashid Khan",18.0,8.0,33.0,0.21,0.05],["Jason Holder",20.0,9.0,34.0,0.16,0.03],["Jofra Archer",24.0,10.0,42.0,0.13,0.05],["Maheesh Theekshana",21.0,8.0,35.0,0.13,0.07]]},"sens":{"labels":["Pressure = top 25% (th .75)","Pressure = top 15% (th .85)","No recency decay","IPL-only data","T20I weight 1.0","Equal pillar weights","Impact + baseline only","No baseline pillar"],"bat":[9,8,9,7,10,9,7,8],"bowl":[7,7,9,7,10,9,7,7]},"sh":{"bat":0.07,"bowl":0.31}};
+
+const BD=[
+  ["bat","Tim David","Tier 1 Priority","Finisher","Answers RR's 6-7 finishing void (157 vs 165 league avg). 66% death exposure with 186.0 pressure SR.","RCB retention contention; overseas slot required. Max ceiling ₹11.5 Cr."],
+  ["bat","Ashutosh Sharma","Tier 1 Priority","Finisher (Domestic)","Domestic Indian death hitter at 7. Frees an overseas slot for premium pace. 193.0 pressure SR.","Thin sample (145 pressure balls); aggressive bidding expected from PBKS/DC."],
+  ["bat","Venkatesh Iyer","Tier 2 Value","Middle Order","Left-handed #4 anchor-accelerator. Addresses 4-5 middle slump (160 vs 165 league avg).","Priced in middle tier; moderate top-10 stability (rank 7)."],
+  ["bat","Shreyas Iyer","Stretch Target","Top-Middle Anchor","Championship chase general; 3.3 dismissals per 100 in crunch. Calm leadership floor.","Expected high purse retention; target via trade or high auction paddle."],
+  ["bat","Heinrich Klaasen","Stretch Target","Wicketkeeper Finisher","World #1 spin destroyer at 5. 189.0 pressure SR. Transforms middle-overs pacing.","SRH retention lock; bid aggressively if entering auction."],
+  ["bowl","Josh Hazlewood","Tier 1 Priority","Death & Powerplay Pace","Direct solution to RR's death-wicket deficit (7.3 vs 8.3 league). 8.3 wickets/100 in leverage.","Workload management, overseas quota. Ceiling ₹9.0 Cr."],
+  ["bowl","Varun Chakravarthy","Tier 2 Value","Mystery Spinner","Middle-overs wicket-taker. Lethal paired with Jadeja on Sawai Mansingh turning tracks.","Auction availability depends on KKR retention choices."],
+  ["bowl","Eshan Malinga","Tier 2 Value","Pace Enforcer","Young slinger with elite high-leverage suppression (8.2 econ, 12.6 raw resilience).","Limited IPL sample (77 pressure balls); high ceiling."],
+  ["bowl","Nathan Ellis","Depth Buy","Death Specialist","Pure tactical specialist: 69% of pressure balls at death. Tactical match-up weapon.","Overseas slot competition; economy 9.0 in high leverage."],
+  ["bowl","Krunal Pandya","Depth Buy","All-Round Floor","Economical left-arm spin with 285 IPL pressure deliveries. Experienced Indian core asset.","Lower wicket-taking ceiling; defensive choke specialist."]
+];
+
+const PIL=[
+  ["A","Impact under leverage","var(--rr-pink)"],
+  ["Bn","Baseline quality floor","var(--rr-blue)"],
+  ["B","Resilience vs normal","var(--rr-steel)"],
+  ["C","Situational consistency","var(--rr-gold)"]
+];
+
+let W={A:35,Bn:25,B:15,C:25};
+let curTab="ov";
+let selIdx=0;
+let curPlayer=null;
+
+const $=s=>document.querySelector(s);
+const f=(v,d=1)=>v==null?"n/a":(+v).toFixed(d);
+
+const TABS=[
+  ["ov","Executive War Room"],
+  ["bat","Batters Clutch Model"],
+  ["bowl","Bowlers Clutch Model"],
+  ["scatter","Clutch vs Baseline Matrix"],
+  ["compare","Head-to-Head Compare"],
+  ["board","Target Auction Board"],
+  ["young","Young & Uncapped Buys"],
+  ["rr","RR Exposure & Deficits"],
+  ["me","Methodology & Rigor"]
+];
+
+function initTabs(){
+  $("#mainTabs").innerHTML=TABS.map(([k,l])=>`
+    <button role="tab" aria-selected="${k===curTab}" data-tab="${k}">
+      <span>${l}</span>
+    </button>
+  `).join("");
+  
+  document.querySelectorAll("#mainTabs button").forEach(b=>{
+    b.onclick=()=>{
+      curTab=b.dataset.tab;
+      selIdx=0;
+      curPlayer=null;
+      render();
+    };
+  });
+}
+
+function setPreset(a,bn,b,c){
+  W={A:a,Bn:bn,B:b,C:c};
+  document.querySelectorAll("input[type=range]").forEach(i=>{
+    i.value=W[i.dataset.k];
+    const valSpan=$("#v"+i.dataset.k);
+    if(valSpan) valSpan.textContent=W[i.dataset.k];
+  });
+  if(curTab==="bat"||curTab==="bowl"){
+    updRank(curTab,curPlayer);
+  }
+}
+
+function rankedList(role){
+  const tot=Object.values(W).reduce((a,b)=>a+b,0)||1;
+  return D[role].map((r,i)=>{
+    const c=[r[4],r[5],r[6],r[7]].map((z,j)=>z*W[PIL[j][0]]/tot);
+    return {r,origIdx:i,c,score:c.reduce((a,b)=>a+b,0)};
+  }).sort((a,b)=>b.score-a.score);
+}
+
+function renderKPIs(){
+  const k=D.ov.kpi;
+  return `
+    <div class="kpi-row">
+      <div class="kpi-card" style="--accent: var(--rr-pink)">
+        <div class="kpi-val">${k.matches}</div>
+        <div class="kpi-label">Matches Calibrated</div>
+        <div class="kpi-sub">${k.ipl} IPL + ${k.matches-k.ipl} T20Is</div>
+      </div>
+      <div class="kpi-card" style="--accent: var(--rr-blue)">
+        <div class="kpi-val">${k.balls.toLocaleString()}</div>
+        <div class="kpi-label">Deliveries Tracked</div>
+        <div class="kpi-sub">${k.pressure.toLocaleString()} in Top 20% Leverage</div>
+      </div>
+      <div class="kpi-card" style="--accent: var(--rr-gold)">
+        <div class="kpi-val">${k.players[0]} / ${k.players[1]}</div>
+        <div class="kpi-label">Rated Profiles</div>
+        <div class="kpi-sub">55 Batters • 64 Bowlers</div>
+      </div>
+      <div class="kpi-card" style="--accent: var(--rr-teal)">
+        <div class="kpi-val">${D.sh.bat} / ${D.sh.bowl}</div>
+        <div class="kpi-label">Split-Half Reliability</div>
+        <div class="kpi-sub">Batters (Stochastic) vs Bowlers (Skill)</div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * EXECUTIVE WAR ROOM OVERVIEW
+ */
+function viewOverview(){
+  const k=D.ov.kpi, o=D.ov;
+  
+  const top10Bat=D.bat.slice(0,10).map((x,idx)=>`
+    <tr>
+      <td class="num" style="color:var(--rr-pink);font-weight:800">#${idx+1}</td>
+      <td><strong>${x[0]}</strong> <span class="tag-badge gray">${x[11]}</span></td>
+      <td class="num">${f(x[8])}</td>
+      <td class="num" style="color:var(--rr-teal)">${x[10]?f(x[10][0],0):'—'}</td>
+      <td class="num">${Math.round(x[9]*100)}%</td>
+      <td style="font-size:12px;color:var(--mute)">${x[17]} • Pos #${x[18]||'5'}</td>
+    </tr>
+  `).join("");
+
+  const top10Bowl=D.bowl.slice(0,10).map((x,idx)=>`
+    <tr>
+      <td class="num" style="color:var(--rr-blue);font-weight:800">#${idx+1}</td>
+      <td><strong>${x[0]}</strong> <span class="tag-badge gray">${x[11]}</span></td>
+      <td class="num">${f(x[8])}</td>
+      <td class="num" style="color:var(--rr-teal)">${x[10]?f(x[10][0],1):'—'}</td>
+      <td class="num">${Math.round(x[9]*100)}%</td>
+      <td style="font-size:12px;color:var(--mute)">${x[17]}</td>
+    </tr>
+  `).join("");
+
+  // RRR Chart
+  const rrrLabels=o.rrr[0];
+  const rrrVals=o.rrr[1];
+  const rrrMax=Math.max(...rrrVals)*1.2;
+  const rrrBars=rrrLabels.map((lbl,i)=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end">
+      <span style="font-size:11px;font-weight:700;margin-bottom:4px;color:var(--ink)">${rrrVals[i]}</span>
+      <div style="width:75%;height:${(rrrVals[i]/rrrMax)*100}%;background:var(--rr-pink);border-radius:4px 4px 0 0"></div>
+      <span style="font-size:11px;color:var(--mute);margin-top:6px">${lbl}</span>
+    </div>
+  `).join("");
+
+  // Phase Chart
+  const phMax=2.2;
+  const phBars=["Powerplay (1-6)","Middle (7-15)","Death (16-20)"].map((lbl,i)=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end">
+      <div style="display:flex;gap:4px;align-items:flex-end;width:80%;height:100%;justify-content:center">
+        <div style="width:40%;height:${(o.phase[0][i]/phMax)*100}%;background:var(--rr-blue);border-radius:4px 4px 0 0" title="1st Innings: ${o.phase[0][i]}"></div>
+        <div style="width:40%;height:${(o.phase[1][i]/phMax)*100}%;background:var(--rr-pink);border-radius:4px 4px 0 0" title="2nd Innings: ${o.phase[1][i]}"></div>
+      </div>
+      <span style="font-size:11px;color:var(--mute);margin-top:6px">${lbl}</span>
+    </div>
+  `).join("");
+
+  $("#viewContainer").innerHTML=`
+    ${renderKPIs()}
+
+    <!-- Strategic RR Briefing -->
+    <div class="callout-box" style="background:var(--surf);border:1px solid var(--line);border-left:5px solid var(--rr-pink);box-shadow:var(--shadow-sm);margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h3 style="font-size:15px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:0.02em">
+          Tactical Mission: Solving RR's Clutch Execution Deficits
+        </h3>
+        <span class="tag-badge pink">Auction Mandate</span>
+      </div>
+      <p style="color:var(--ink-secondary);line-height:1.6;font-size:13.5px">
+        A forensic analysis of the 2022–2026 T20 cycle highlights two specific strategic bottlenecks for Rajasthan Royals: 
+        <strong>(1) The Lower-Order Finishing Hole</strong> — RR batters at #6 and #7 strike at only <strong>157.0</strong> in high-leverage balls (compared to the league benchmark of <strong>165.4</strong>), directly costing 3 tight finishes last season. 
+        <strong>(2) Death Bowling Wicket Deficit</strong> — RR bowlers capture just <strong>7.28 wickets per 100 balls</strong> at the death under leverage versus the league benchmark of <strong>8.27</strong>. Our decision engine is calibrated to acquire elite finishing muscle and a cold-blooded death specialist without compromising purse balance.
+      </p>
+    </div>
+
+    <!-- Top 10 Unstop Submission Grid -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Top 10 Batters Under Pressure</span>
+            <span class="badge-sub">Unstop Dropdown 1-10</span>
+          </div>
+          <button class="btn-preset" onclick="curTab='bat';render()">Tune Weights →</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Clutch</th>
+                <th>Pres SR</th>
+                <th>Stability</th>
+                <th>Role / Pos</th>
+              </tr>
+            </thead>
+            <tbody>${top10Bat}</tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--mute);margin-top:10px">
+          <strong>Official Submission:</strong> <em>Submit these 10 batters in order (Rank 1 through 10) on the Unstop portal.</em>
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Top 10 Bowlers Under Pressure</span>
+            <span class="badge-sub">Unstop Dropdown 1-10</span>
+          </div>
+          <button class="btn-preset" onclick="curTab='bowl';render()">Tune Weights →</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Clutch</th>
+                <th>Pres Econ</th>
+                <th>Stability</th>
+                <th>Bowling Style</th>
+              </tr>
+            </thead>
+            <tbody>${top10Bowl}</tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--mute);margin-top:10px">
+          <strong>Official Submission:</strong> <em>Submit these 10 bowlers in order (Rank 1 through 10) on the Unstop portal.</em>
+        </p>
+      </div>
+    </div>
+
+    <!-- Leverage Distributions -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Win-Probability Leverage by Required Run Rate (Chases)</span>
+          </div>
+        </div>
+        <div style="height:150px;display:flex;align-items:flex-end;gap:8px;padding:10px 0 4px">
+          ${rrrBars}
+        </div>
+        <p style="font-size:12px;color:var(--mute);margin-top:10px">
+          Leverage peaks when RRR sits between <strong>8.0 and 12.0</strong> per over. Beyond 15.0 RRR, match leverage declines as match outcome certainty rises.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Leverage Multiplier by Match Phase</span>
+          </div>
+          <div class="legend" style="margin:0">
+            <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-blue)"></i> 1st Inns</span>
+            <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-pink)"></i> 2nd Inns (Chase)</span>
+          </div>
+        </div>
+        <div style="height:150px;display:flex;align-items:flex-end;gap:8px;padding:10px 0 4px">
+          ${phBars}
+        </div>
+        <p style="font-size:12px;color:var(--mute);margin-top:10px">
+          Baseline ball = 1.0. Death overs in chases carry an extreme leverage factor of <strong>1.87x</strong>, making death execution twice as decisive as the powerplay.
+        </p>
+      </div>
+    </div>
+
+    <!-- League-wide Outcome Validation -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Empirical Validation: Normal Deliveries vs High-Leverage Pressure Balls</span>
+          <span class="badge-sub">39,026 Leverage Balls</span>
+        </div>
+        <div class="legend" style="margin:0">
+          <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-steel)"></i> Normal Baseline</span>
+          <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-pink)"></i> High Leverage</span>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:0">
+        <div class="callout-box info" style="margin:0">
+          <b>Batter Strike Rate Escalation:</b> In 1st innings, normal SR is 136.65 vs <strong>156.78</strong> in leverage (+20.13 SR jump). In chases, baseline is 135.61 vs <strong>146.58</strong>.
+          <br><br>
+          <b>Dismissal Risk Inflation:</b> Batter dismissal rate spikes from 4.8% to <strong>7.5% per 100 balls</strong> in leverage (+56% higher dismissal hazard), verifying the model correctly isolates match-stress situations.
+        </div>
+        <div class="callout-box teal" style="margin:0">
+          <b>Bowler Economy Compression:</b> Bowler economy elevates from 8.18 to 9.32 in 1st innings leverage. Bowlers who maintain sub-8.0 economies in this crucible (e.g. Bumrah, Narine, Hazlewood) are genuine championship commodities.
+          <br><br>
+          <b>Wicket-Taking Crucible:</b> Bowler strike rates improve from 4.54 to <strong>6.62 wickets/100 balls</strong> in leverage (+45% spike), confirming attacking venom is rewarded over defensive containment.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * RANKING MODEL WITH INTERACTIVE SLIDERS (BATTERS / BOWLERS)
+ */
+function viewRankModel(role){
+  const isBat=role==="bat";
+  const label=isBat?"Batter":"Bowler";
+  
+  const sliderHTML=PIL.map(([k,l,col])=>`
+    <div class="slider-group">
+      <label>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${col};margin-right:6px"></span>${l}</span>
+        <span id="v${k}">${W[k]}%</span>
+      </label>
+      <input type="range" min="0" max="60" value="${W[k]}" data-k="${k}" aria-label="${l} weight">
+    </div>
+  `).join("");
+
+  const legendHTML=PIL.map(([k,l,col])=>`
+    <span class="legend-item"><i class="legend-dot" style="--c:${col}"></i> ${l}</span>
+  `).join("");
+
+  $("#viewContainer").innerHTML=`
+    <div class="grid-rank">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>${label} Clutch Valuation Engine</span>
+            <span class="badge-sub">Live Multi-Pillar Tuner</span>
+          </div>
+          <input type="text" class="search-box" id="rosterSearch" placeholder="Filter ${role}s..." style="width:180px">
+        </div>
+
+        <!-- Strategy Presets -->
+        <div class="preset-bar">
+          <span class="preset-label">Tactical Strategy Presets:</span>
+          <button class="btn-preset" onclick="setPreset(35,25,15,25)">Balanced Scout (35/25/15/25)</button>
+          <button class="btn-preset" onclick="setPreset(50,15,20,15)">Pure Clutch WPA (50/15/20/15)</button>
+          <button class="btn-preset" onclick="setPreset(20,45,10,25)">Baseline Class Floor (20/45/10/25)</button>
+          <button class="btn-preset" onclick="setPreset(40,20,25,15)">Death Specialist (40/20/25/15)</button>
+        </div>
+
+        <div class="sliders-grid">
+          ${sliderHTML}
+        </div>
+
+        <div class="legend">${legendHTML}</div>
+
+        <div class="roster-list" id="rosterContainer"></div>
+        <p style="font-size:12px;color:var(--mute);margin-top:12px">
+          Note: Delta indicators (▲/▼) reflect ranking shifts against the baseline calibrated model. Click any player to inspect their tactical dossier.
+        </p>
+      </div>
+
+      <!-- Player Detail Card -->
+      <div id="playerDossierContainer"></div>
+    </div>
+  `;
+
+  document.querySelectorAll("input[type=range]").forEach(inp=>{
+    inp.oninput=()=>{
+      W[inp.dataset.k]=+inp.value;
+      const v=$("#v"+inp.dataset.k);
+      if(v) v.textContent=inp.value+"%";
+      updRank(role,curPlayer);
+    };
+  });
+
+  const sBox=$("#rosterSearch");
+  if(sBox){
+    sBox.oninput=()=>{
+      updRank(role,curPlayer,sBox.value);
+    };
+  }
+
+  updRank(role,null);
+}
+
+function updRank(role,keepName,query=""){
+  let L=rankedList(role);
+  if(query.trim()){
+    const q=query.toLowerCase();
+    L=L.filter(x=>x.r[0].toLowerCase().includes(q)||x.r[11].toLowerCase().includes(q));
+  }
+  
+  if(!L.length){
+    $("#rosterContainer").innerHTML=`<div style="padding:20px;text-align:center;color:var(--mute)">No players matched your filter.</div>`;
+    $("#playerDossierContainer").innerHTML="";
+    return;
+  }
+
+  const maxScore=Math.max(...L.map(x=>Math.max(x.score,0.1)));
+  
+  let targetIdx=0;
+  if(keepName){
+    const found=L.findIndex(x=>x.r[0]===keepName);
+    if(found>=0) targetIdx=found;
+  }
+  selIdx=Math.min(targetIdx,L.length-1);
+  curPlayer=L[selIdx].r[0];
+
+  const rowsHTML=L.slice(0,25).map((x,idx)=>{
+    const d=x.origIdx-idx;
+    const deltaHTML=d>0?`<span class="roster-delta up">▲${d}</span>`:d<0?`<span class="roster-delta down">▼${-d}</span>`:"";
+    const barSegments=x.c.map((val,j)=>`
+      <i style="width:${Math.max(val,0)/maxScore*100}%;background:${PIL[j][2]}"></i>
+    `).join("");
+
+    return `
+      <div class="roster-row" tabindex="0" role="button" data-idx="${idx}" aria-selected="${idx===selIdx}">
+        <span class="roster-rank">#${idx+1}</span>
+        <div>
+          <div style="display:flex;align-items:center;flex-wrap:wrap">
+            <span class="roster-name">${x.r[0]}</span>
+            <span class="roster-team">${x.r[11]}</span>
+            ${x.r[17]?`<span class="roster-role">${x.r[17]}</span>`:""}
+            ${deltaHTML}
+          </div>
+          <div class="bar-stack">${barSegments}</div>
+        </div>
+        <span class="roster-score">${f(x.score,2)}</span>
+      </div>
+    `;
+  }).join("");
+
+  $("#rosterContainer").innerHTML=rowsHTML;
+
+  document.querySelectorAll(".roster-row").forEach(el=>{
+    el.onclick=()=>{
+      selIdx=+el.dataset.idx;
+      curPlayer=L[selIdx].r[0];
+      document.querySelectorAll(".roster-row").forEach(r=>r.setAttribute("aria-selected",r.dataset.idx==selIdx));
+      renderDossier(role,L[selIdx]);
+    };
+    el.onkeydown=e=>{if(e.key==="Enter")el.click()};
+  });
+
+  renderDossier(role,L[selIdx]);
+}
+
+function renderDossier(role,item){
+  if(!item) return;
+  const isBat=role==="bat";
+  const r=item.r;
+  const st=r[10];
+
+  let splitsHTML="";
+  if(st){
+    if(isBat){
+      const maxSR=Math.max(st[0],st[1],210);
+      const maxOut=Math.max(st[2],st[3],10);
+      splitsHTML=`
+        <div class="comp-metric">
+          <div class="comp-metric-header">
+            <span>Strike Rate (Runs / 100 Balls)</span>
+            <span style="color:${st[0]>=st[1]?'var(--rr-teal)':'var(--rr-warn)'}">${st[0]>=st[1]?'+':''}${f(st[0]-st[1],1)} Δ</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Leverage</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[0]/maxSR)*100}%;background:var(--rr-pink)"></div></div>
+            <span class="comp-bar-val">${f(st[0],0)}</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Normal</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[1]/maxSR)*100}%;background:var(--rr-steel)"></div></div>
+            <span class="comp-bar-val">${f(st[1],0)}</span>
+          </div>
+        </div>
+
+        <div class="comp-metric">
+          <div class="comp-metric-header">
+            <span>Dismissal Rate (Per 100 Balls)</span>
+            <span style="color:${st[2]<=st[3]?'var(--rr-teal)':'var(--rr-warn)'}">${st[2]<=st[3]?'-':'+'}${f(Math.abs(st[2]-st[3]),1)} Δ</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Leverage</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[2]/maxOut)*100}%;background:var(--rr-pink)"></div></div>
+            <span class="comp-bar-val">${f(st[2],1)}</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Normal</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[3]/maxOut)*100}%;background:var(--rr-steel)"></div></div>
+            <span class="comp-bar-val">${f(st[3],1)}</span>
+          </div>
+        </div>
+
+        <div class="callout-box" style="margin:10px 0;font-size:12px">
+          <strong>Crucible Context:</strong> <strong>${st[4]}%</strong> of his high-leverage deliveries occur in the death overs (16–20); <strong>${st[5]}%</strong> in chases.
+        </div>
+      `;
+    }else{
+      const maxEcon=Math.max(st[0],st[1],13);
+      const maxWkt=Math.max(st[2],st[3],12);
+      splitsHTML=`
+        <div class="comp-metric">
+          <div class="comp-metric-header">
+            <span>Economy Rate (Runs / Over)</span>
+            <span style="color:${st[0]<=st[1]?'var(--rr-teal)':'var(--rr-warn)'}">${st[0]<=st[1]?'-':'+'}${f(Math.abs(st[0]-st[1]),1)} Δ</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Leverage</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[0]/maxEcon)*100}%;background:var(--rr-pink)"></div></div>
+            <span class="comp-bar-val">${f(st[0],1)}</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Normal</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[1]/maxEcon)*100}%;background:var(--rr-steel)"></div></div>
+            <span class="comp-bar-val">${f(st[1],1)}</span>
+          </div>
+        </div>
+
+        <div class="comp-metric">
+          <div class="comp-metric-header">
+            <span>Wicket Strike Rate (Wkts / 100 Balls)</span>
+            <span style="color:${st[2]>=st[3]?'var(--rr-teal)':'var(--rr-warn)'}">${st[2]>=st[3]?'+':''}${f(st[2]-st[3],1)} Δ</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Leverage</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[2]/maxWkt)*100}%;background:var(--rr-pink)"></div></div>
+            <span class="comp-bar-val">${f(st[2],1)}</span>
+          </div>
+          <div class="comp-bar-row">
+            <em>Normal</em>
+            <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${(st[3]/maxWkt)*100}%;background:var(--rr-steel)"></div></div>
+            <span class="comp-bar-val">${f(st[3],1)}</span>
+          </div>
+        </div>
+
+        <div class="callout-box" style="margin:10px 0;font-size:12px">
+          <strong>Phase Distribution:</strong> <strong>${st[4]}%</strong> of his leverage bowling workload comes at the death; <strong>${st[5]}%</strong> defending in second innings.
+        </div>
+      `;
+    }
+  }else{
+    splitsHTML=`<div class="callout-box" style="margin:10px 0;font-size:12px">Detailed high-leverage split is calibrated for top-10 tier profiles. Raw metrics available below.</div>`;
+  }
+
+  // Sample reliability alert
+  let sampleBadge="";
+  if(r[2]<60){
+    sampleBadge=`<div class="callout-box gold" style="margin:10px 0;font-size:12px"><strong>[Scouting Advisory]</strong> Sample size is modest (${r[2]} IPL leverage deliveries across ${r[3]} high-leverage spells). Treat valuation as high-upside scouting signal.</div>`;
+  }else{
+    sampleBadge=`<div class="callout-box teal" style="margin:10px 0;font-size:12px"><strong>[High Reliability]</strong> Robust statistical sample (${r[2]} IPL leverage deliveries, ${r[3]} high-leverage innings). High confidence for auction valuation.</div>`;
+  }
+
+  // Tactical scout insight
+  let scoutInsight="";
+  if(isBat){
+    scoutInsight=`${r[0]} profiles as a <strong>${r[17]||'Right-hand'}</strong> specialist primarily deploying at position <strong>#${r[18]||'5'}</strong> in high-stress game states.`;
+  }else{
+    scoutInsight=`${r[0]} executes as a <strong>${r[17]}</strong> enforcer with high-leverage workload focused at the death.`;
+  }
+
+  $("#playerDossierContainer").innerHTML=`
+    <div class="player-dossier">
+      <div class="dossier-hero">
+        <div>
+          <div class="dossier-name">${r[0]}</div>
+          <div class="dossier-meta">${r[11]} • ${scoutInsight}</div>
+        </div>
+        <span class="tag-badge pink">Rank #${r[16]}</span>
+      </div>
+
+      <div class="dossier-pills">
+        <div class="stat-pill">
+          <b>${f(r[8])}</b>
+          <span>Clutch Index</span>
+        </div>
+        <div class="stat-pill">
+          <b>${r[9]==null?'n/a':Math.round(r[9]*100)+'%'}</b>
+          <span>Top-10 Stability</span>
+        </div>
+        <div class="stat-pill">
+          <b>${r[1]}</b>
+          <span>Leverage Balls</span>
+        </div>
+      </div>
+
+      ${splitsHTML}
+      ${sampleBadge}
+
+      <!-- Analytical Pillar Breakdown -->
+      <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--ink-secondary);margin-bottom:6px">Raw Tactical Pillars:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11.5px;color:var(--mute)">
+          <div>Impact WPA: <strong style="color:var(--ink)">${f(r[12],1)} bp/100b</strong></div>
+          <div>Baseline Skill: <strong style="color:var(--ink)">${f(r[13],1)} r/100b</strong></div>
+          <div>Resilience Delta: <strong style="color:var(--ink)">${f(r[14],1)}</strong></div>
+          <div>Consistency Hit: <strong style="color:var(--ink)">${f(r[15],1)}%</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * CLUTCH VS BASELINE QUADRANT SCATTER PLOT
+ */
+let scatterRole = "bat";
+let matrixQuery = "";
+let selectedScatterPlayer = null;
+
+function renderScatterPlayerCard(p, isBat) {
+  if (!p) {
+    return `
+      <div class="callout-box info" style="margin-top:14px;text-align:center;color:var(--mute)">
+        Select any player from the matrix or table to inspect their complete situational dossier.
+      </div>
+    `;
+  }
+  const st = p[10] || [0, 0, 0, 0, 0, 0];
+  const roleTitle = isBat ? "Batter" : "Bowler";
+  const subTitle = isBat 
+    ? `${p[11]} • Position #${p[18] || '5'} • ${p[17] || 'Standard'}`
+    : `${p[11]} • ${p[17] || 'Pace/Spin Enforcer'}`;
+
+  const m1Label = isBat ? "Pressure Strike Rate" : "Pressure Economy";
+  const m1Val = isBat ? f(st[0], 0) : f(st[0], 1);
+  const m1Norm = isBat ? f(st[1], 0) : f(st[1], 1);
+  const m1Diff = isBat ? (st[0] - st[1]) : (st[1] - st[0]);
+  const m1Good = isBat ? (st[0] >= st[1]) : (st[0] <= st[1]);
+  const m1DiffText = (m1Good ? "+" : "") + f(m1Diff, 1) + (isBat ? " SR" : " RPO");
+
+  const m2Label = isBat ? "Dismissal Rate / 100b" : "Wickets / 100 Balls";
+  const m2Val = f(st[2], 1);
+  const m2Norm = f(st[3], 1);
+  const m2Diff = isBat ? (st[3] - st[2]) : (st[2] - st[3]);
+  const m2Good = isBat ? (st[2] <= st[3]) : (st[2] >= st[3]);
+  const m2DiffText = (m2Good ? "+" : "") + f(m2Diff, 1);
+
+  return `
+    <div class="callout-box" style="margin-top:14px;background:var(--surf);border:1px solid var(--line);border-left:5px solid var(--rr-pink);box-shadow:var(--shadow-sm);padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <h3 style="font-size:20px;font-weight:800;color:var(--ink);margin:0">${p[0]}</h3>
+            <span class="tag-badge pink">Rank #${p[16]}</span>
+            <span class="tag-badge gray">${p[11]}</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--mute);margin-top:4px">${roleTitle} • ${subTitle}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font:800 24px var(--font-mono);color:var(--rr-pink);line-height:1">${f(p[8], 1)}</div>
+          <div style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.04em">Clutch Index</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px">
+        <div class="stat-pill" style="padding:8px 10px">
+          <b>${p[1]}</b>
+          <span>Pressure Balls</span>
+        </div>
+        <div class="stat-pill" style="padding:8px 10px">
+          <b>${p[2]}</b>
+          <span>IPL Balls</span>
+        </div>
+        <div class="stat-pill" style="padding:8px 10px">
+          <b>${p[3]}</b>
+          <span>Crucible Innings</span>
+        </div>
+        <div class="stat-pill" style="padding:8px 10px">
+          <b>${f(p[15], 1)}%</b>
+          <span>Hit Rate %</span>
+        </div>
+        <div class="stat-pill" style="padding:8px 10px">
+          <b>${st[4]}%</b>
+          <span>Death Workload</span>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:12px">
+        <div class="callout-box" style="margin:0;padding:12px;background:var(--surf-alt);border:1px solid var(--line)">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--ink-secondary);margin-bottom:4px">
+            <span>${m1Label}</span>
+            <span style="color:${m1Good ? 'var(--rr-teal)' : 'var(--rr-warn)'}">${m1DiffText} vs Normal</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font:800 18px var(--font-mono);color:var(--rr-pink)">${m1Val}</span>
+            <span style="font-size:12px;color:var(--mute)">Normal Baseline: <strong>${m1Norm}</strong></span>
+          </div>
+        </div>
+
+        <div class="callout-box" style="margin:0;padding:12px;background:var(--surf-alt);border:1px solid var(--line)">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--ink-secondary);margin-bottom:4px">
+            <span>${m2Label}</span>
+            <span style="color:${m2Good ? 'var(--rr-teal)' : 'var(--rr-warn)'}">${m2DiffText} vs Normal</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font:800 18px var(--font-mono);color:var(--rr-blue)">${m2Val}</span>
+            <span style="font-size:12px;color:var(--mute)">Normal Baseline: <strong>${m2Norm}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--line);padding-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;font-size:11.5px;color:var(--mute)">
+        <div>Impact WPA: <strong style="color:var(--ink)">${f(p[12], 1)} bp/100b</strong></div>
+        <div>Baseline Skill: <strong style="color:var(--ink)">${f(p[13], 1)} r/100b</strong></div>
+        <div>Resilience Delta: <strong style="color:var(--ink)">${f(p[14], 1)}</strong></div>
+        <div>Situational Hit Rate: <strong style="color:var(--ink)">${f(p[15], 1)}%</strong></div>
+      </div>
+    </div>
+  `;
+}
+
+function makeMatrixTableRow(r, isBat, isSelected) {
+  const st = r[10] || [0, 0, 0, 0, 0, 0];
+  return `
+    <tr class="matrix-data-row ${isSelected ? 'selected' : ''}" data-name="${r[0]}" style="cursor:pointer">
+      <td class="num" style="font-weight:800;color:${isBat ? 'var(--rr-pink)' : 'var(--rr-blue)'}">#${r[16]}</td>
+      <td><strong>${r[0]}</strong></td>
+      <td><span class="tag-badge gray">${r[11]}</span></td>
+      <td class="num" style="font-weight:700">${f(r[8], 1)}</td>
+      <td class="num">${r[1]}</td>
+      <td class="num">${r[2]}</td>
+      <td class="num">${r[3]}</td>
+      <td class="num" style="color:${r[12] >= 0 ? 'var(--ink)' : 'var(--rr-warn)'}">${f(r[12], 1)}</td>
+      <td class="num" style="color:${r[13] >= 0 ? 'var(--ink)' : 'var(--rr-warn)'}">${f(r[13], 1)}</td>
+      <td class="num" style="color:${r[14] >= 0 ? 'var(--ink)' : 'var(--rr-warn)'}">${f(r[14], 1)}</td>
+      <td class="num">${f(r[15], 1)}%</td>
+      <td class="num" style="color:var(--rr-pink);font-weight:700">${isBat ? f(st[0], 0) : f(st[0], 1)}</td>
+      <td class="num">${isBat ? f(st[1], 0) : f(st[1], 1)}</td>
+      <td class="num" style="color:var(--rr-blue);font-weight:700">${f(st[2], 1)}</td>
+      <td class="num">${f(st[3], 1)}</td>
+      <td class="num">${st[4]}%</td>
+    </tr>
+  `;
+}
+
+function viewScatterMatrix(){
+  const isBat = scatterRole === "bat";
+  const R = D[scatterRole];
+
+  if (!selectedScatterPlayer || !R.some(x => x[0] === selectedScatterPlayer)) {
+    selectedScatterPlayer = R[0][0];
+  }
+
+  const xs = R.map(r => r[12]);
+  const ys = R.map(r => r[13]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const y0 = Math.min(...ys), y1 = Math.max(...ys);
+
+  const W = 760, H = 420;
+  const padL = 60, padR = 40, padT = 40, padB = 60;
+  const pw = W - padL - padR, ph = H - padT - padB;
+
+  const X = v => padL + (v - x0) / (x1 - x0) * pw;
+  const Y = v => padT + ph - (v - y0) / (y1 - y0) * ph;
+
+  const zeroX = X(0);
+  const zeroY = Y(0);
+
+  const dotsHTML = R.map(r => {
+    const cx = X(r[12]);
+    const cy = Y(r[13]);
+    const rad = Math.max(4, Math.min(11, 3 + Math.sqrt(r[1]) / 3.5));
+    const isTop = r[16] <= 8;
+    const isRR = r[11] === "RR";
+    const isSel = r[0] === selectedScatterPlayer;
+    const color = isRR ? "var(--rr-pink)" : (isBat ? "var(--rr-blue)" : "var(--rr-teal)");
+    return `
+      <circle class="scatter-dot ${isSel ? 'selected' : ''}" cx="${cx}" cy="${cy}" r="${isSel ? rad + 2 : rad}" fill="${color}" fill-opacity="${isTop || isSel ? 0.95 : 0.55}" stroke="${isSel ? 'var(--ink)' : (isTop ? '#FFFFFF' : 'transparent')}" stroke-width="${isSel ? 3 : 1.5}" data-name="${r[0]}">
+        <title>${r[0]} (${r[11]})\nClutch Rating: ${r[8]}\nImpact WPA: ${r[12]} bp\nBaseline: ${r[13]}\nPressure Balls: ${r[1]}</title>
+      </circle>
+      ${isTop ? `<text x="${cx + 8}" y="${cy + 3}" font-size="10.5" font-weight="700" fill="var(--ink)">${r[0]}</text>` : ''}
+    `;
+  }).join("");
+
+  const tableHeaders = isBat ? `
+    <tr>
+      <th># ▲</th>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Rating</th>
+      <th>Pressure balls</th>
+      <th>IPL balls</th>
+      <th>Innings</th>
+      <th>Impact</th>
+      <th>Baseline</th>
+      <th>Resilience</th>
+      <th>Hit rate %</th>
+      <th>SR pressure</th>
+      <th>SR normal</th>
+      <th>Out % pressure</th>
+      <th>Out % normal</th>
+      <th>Death %</th>
+    </tr>
+  ` : `
+    <tr>
+      <th># ▲</th>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Rating</th>
+      <th>Pressure balls</th>
+      <th>IPL balls</th>
+      <th>Innings</th>
+      <th>Impact</th>
+      <th>Baseline</th>
+      <th>Resilience</th>
+      <th>Hit rate %</th>
+      <th>Econ pressure</th>
+      <th>Econ normal</th>
+      <th>Wkts pressure</th>
+      <th>Wkts normal</th>
+      <th>Death %</th>
+    </tr>
+  `;
+
+  let filteredR = R;
+  if (matrixQuery) {
+    filteredR = R.filter(r => r[0].toLowerCase().includes(matrixQuery) || r[11].toLowerCase().includes(matrixQuery));
+  }
+  const tableRowsHTML = filteredR.length 
+    ? filteredR.map(r => makeMatrixTableRow(r, isBat, r[0] === selectedScatterPlayer)).join("")
+    : `<tr><td colspan="16" style="text-align:center;padding:24px;color:var(--mute)">No player matching "${matrixQuery}"</td></tr>`;
+
+  const activePlayerObj = R.find(x => x[0] === selectedScatterPlayer) || filteredR[0] || null;
+
+  $("#viewContainer").innerHTML = `
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Clutch vs Baseline Quality: Quadrant Matrix</span>
+          <span class="badge-sub" id="matrixSubBadge">${isBat ? '55 Batters' : '64 Bowlers'}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input type="text" class="search-box" id="matrixSearch" placeholder="Search player or team..." value="${matrixQuery}" style="width:220px">
+          <div style="display:flex;gap:6px">
+            <button class="btn-preset ${scatterRole === 'bat' ? 'active' : ''}" style="${scatterRole === 'bat' ? 'background:var(--rr-pink);color:#fff;border-color:var(--rr-pink)' : ''}" id="btnScatterBat">Batters</button>
+            <button class="btn-preset ${scatterRole === 'bowl' ? 'active' : ''}" style="${scatterRole === 'bowl' ? 'background:var(--rr-pink);color:#fff;border-color:var(--rr-pink)' : ''}" id="btnScatterBowl">Bowlers</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout-box" style="margin-bottom:12px;font-size:12.5px">
+        <strong>Strategic Quadrant Map:</strong> 
+        <strong>Top-Right:</strong> Elite Match-Winners (Superior Baseline Quality + Dominant Pressure Execution). 
+        <strong>Top-Left:</strong> Clutch Specialists (Average Baseline, but Elevate Under Pressure). 
+        <strong>Bottom-Right:</strong> Anchors / Pressure Vulnerable (High Baseline, but Suppressed in Crunch Moments). Dot size = Volume of pressure deliveries faced.
+      </div>
+
+      <div class="chart-container" style="overflow-x:auto">
+        <svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:600px;max-height:480px">
+          <rect x="${zeroX}" y="${padT}" width="${W - padR - zeroX}" height="${zeroY - padT}" fill="rgba(16,185,129,0.04)"/>
+          <rect x="${padL}" y="${padT}" width="${zeroX - padL}" height="${zeroY - padT}" fill="rgba(37,99,235,0.03)"/>
+          <rect x="${zeroX}" y="${zeroY}" width="${W - padR - zeroX}" height="${padT + ph - zeroY}" fill="rgba(245,158,11,0.03)"/>
+          <rect x="${padL}" y="${zeroY}" width="${zeroX - padL}" height="${padT + ph - zeroY}" fill="rgba(239,68,68,0.03)"/>
+
+          <line x1="${padL}" y1="${zeroY}" x2="${W - padR}" y2="${zeroY}" stroke="var(--line-strong)" stroke-dasharray="4 4" stroke-width="1.2"/>
+          <line x1="${zeroX}" y1="${padT}" x2="${zeroX}" y2="${padT + ph}" stroke="var(--line-strong)" stroke-dasharray="4 4" stroke-width="1.2"/>
+          <rect x="${padL}" y="${padT}" width="${pw}" height="${ph}" fill="none" stroke="var(--line)" stroke-width="1"/>
+
+          <text x="${W / 2}" y="${H - 16}" text-anchor="middle" font-size="12" font-weight="700">High-Leverage Impact (WPA Basis Points per 100 Balls) →</text>
+          <text x="18" y="${H / 2}" text-anchor="middle" font-size="12" font-weight="700" transform="rotate(-90 18 ${H / 2})">Baseline Quality (Runs Above Expected) ↑</text>
+
+          <text x="${W - padR - 10}" y="${padT + 20}" text-anchor="end" font-size="11" font-weight="800" fill="var(--rr-teal)">QUADRANT I: ELITE MATCH-WINNERS</text>
+          <text x="${padL + 10}" y="${padT + 20}" text-anchor="start" font-size="11" font-weight="800" fill="var(--rr-blue)">QUADRANT II: CLUTCH SPECIALISTS</text>
+          <text x="${W - padR - 10}" y="${padT + ph - 12}" text-anchor="end" font-size="11" font-weight="800" fill="var(--rr-gold)">QUADRANT IV: VOLUME ANCHORS (PRESSURE DIP)</text>
+          <text x="${padL + 10}" y="${padT + ph - 12}" text-anchor="start" font-size="11" font-weight="800" fill="var(--rr-warn)">QUADRANT III: VULNERABLE IN CRUNCH</text>
+
+          ${dotsHTML}
+        </svg>
+      </div>
+
+      <!-- Player Detail Card -->
+      <div id="scatterPlayerCard">
+        ${renderScatterPlayerCard(activePlayerObj, isBat)}
+      </div>
+
+      <!-- Full Situational Table Below Matrix -->
+      <div style="margin-top:24px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+          <div>
+            <h4 style="font-size:15px;font-weight:800;color:var(--ink);margin:0">
+              Situational Performance Dataset: ${isBat ? '55 Batters' : '64 Bowlers'}
+            </h4>
+            <div style="font-size:12px;color:var(--mute)" id="matrixTableNote">
+              Showing ${filteredR.length} of ${R.length} players. Click any row or dot to inspect full profile.
+            </div>
+          </div>
+          <div style="font-size:11.5px;color:var(--mute)">
+            Sorted by Official Model Rank (# ▲)
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" style="font-size:12px">
+            <thead>${tableHeaders}</thead>
+            <tbody id="matrixTableBody">${tableRowsHTML}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Attach search listener
+  const sInput = $("#matrixSearch");
+  if (sInput) {
+    sInput.oninput = () => {
+      matrixQuery = sInput.value.trim().toLowerCase();
+      updateMatrixView(isBat, R);
+    };
+  }
+
+  // Attach role toggle listeners
+  const btnBat = $("#btnScatterBat");
+  if (btnBat) {
+    btnBat.onclick = () => {
+      scatterRole = "bat";
+      matrixQuery = "";
+      selectedScatterPlayer = null;
+      viewScatterMatrix();
+    };
+  }
+  const btnBowl = $("#btnScatterBowl");
+  if (btnBowl) {
+    btnBowl.onclick = () => {
+      scatterRole = "bowl";
+      matrixQuery = "";
+      selectedScatterPlayer = null;
+      viewScatterMatrix();
+    };
+  }
+
+  attachMatrixInteractions(isBat, R);
+}
+
+function updateMatrixView(isBat, R) {
+  let filtered = R;
+  if (matrixQuery) {
+    filtered = R.filter(r => r[0].toLowerCase().includes(matrixQuery) || r[11].toLowerCase().includes(matrixQuery));
+  }
+
+  if (filtered.length > 0) {
+    if (!selectedScatterPlayer || !filtered.some(x => x[0] === selectedScatterPlayer)) {
+      selectedScatterPlayer = filtered[0][0];
+    }
+  } else {
+    selectedScatterPlayer = null;
+  }
+
+  const activePlayer = R.find(x => x[0] === selectedScatterPlayer) || null;
+  const pCard = $("#scatterPlayerCard");
+  if (pCard) {
+    pCard.innerHTML = renderScatterPlayerCard(activePlayer, isBat);
+  }
+
+  const tBody = $("#matrixTableBody");
+  if (tBody) {
+    tBody.innerHTML = filtered.length
+      ? filtered.map(r => makeMatrixTableRow(r, isBat, r[0] === selectedScatterPlayer)).join("")
+      : `<tr><td colspan="16" style="text-align:center;padding:24px;color:var(--mute)">No player matching "${matrixQuery}"</td></tr>`;
+  }
+
+  const tNote = $("#matrixTableNote");
+  if (tNote) {
+    tNote.textContent = `Showing ${filtered.length} of ${R.length} players. Click any row or dot to inspect full profile.`;
+  }
+
+  // Update SVG dots
+  document.querySelectorAll(".scatter-dot").forEach(dot => {
+    const pName = dot.dataset.name;
+    const isMatch = filtered.some(x => x[0] === pName);
+    const isSel = pName === selectedScatterPlayer;
+
+    if (matrixQuery) {
+      if (isMatch) {
+        dot.style.opacity = isSel ? "1" : "0.85";
+        dot.style.display = "";
+      } else {
+        dot.style.opacity = "0.12";
+      }
+    } else {
+      dot.style.opacity = "";
+      dot.style.display = "";
+    }
+
+    if (isSel) {
+      dot.classList.add("selected");
+      dot.setAttribute("stroke", "var(--ink)");
+      dot.setAttribute("stroke-width", "3");
+    } else {
+      dot.classList.remove("selected");
+      const isTop = R.find(x => x[0] === pName)?.[16] <= 8;
+      dot.setAttribute("stroke", isTop ? "#FFFFFF" : "transparent");
+      dot.setAttribute("stroke-width", isTop ? "1.5" : "1");
+    }
+  });
+
+  attachMatrixInteractions(isBat, R);
+}
+
+function attachMatrixInteractions(isBat, R) {
+  // Dot click
+  document.querySelectorAll(".scatter-dot").forEach(dot => {
+    dot.onclick = () => {
+      const pName = dot.dataset.name;
+      selectedScatterPlayer = pName;
+      updateMatrixView(isBat, R);
+      const targetRow = document.querySelector(`#matrixTableBody tr[data-name="${pName}"]`);
+      if (targetRow) {
+        targetRow.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    };
+  });
+
+  // Row click
+  document.querySelectorAll(".matrix-data-row").forEach(row => {
+    row.onclick = () => {
+      const pName = row.dataset.name;
+      selectedScatterPlayer = pName;
+      updateMatrixView(isBat, R);
+      const pCard = $("#scatterPlayerCard");
+      if (pCard) {
+        pCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    };
+  });
+}
+
+
+/**
+ * HEAD-TO-HEAD COMPARISON TOOL
+ */
+let compP1="Tim David", compP2="Ashutosh Sharma";
+function viewComparisonTool(){
+  const allBatters=D.bat.map(x=>x[0]);
+  const allBowlers=D.bowl.map(x=>x[0]);
+  const allPlayers=[...allBatters, ...allBowlers];
+
+  const p1Obj=D.bat.find(x=>x[0]===compP1)||D.bowl.find(x=>x[0]===compP1)||D.bat[1];
+  const p2Obj=D.bat.find(x=>x[0]===compP2)||D.bowl.find(x=>x[0]===compP2)||D.bat[8];
+
+  const isP1Bat=D.bat.some(x=>x[0]===p1Obj[0]);
+  const isP2Bat=D.bat.some(x=>x[0]===p2Obj[0]);
+
+  function getCardHTML(p,isBat){
+    const st=p[10];
+    return `
+      <div class="compare-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+          <div>
+            <h3 style="font-size:18px;font-weight:800;margin:0;color:var(--ink)">${p[0]}</h3>
+            <div style="font-size:12px;color:var(--mute)">${p[11]} • ${isBat?'Batter':'Bowler'} (${p[17]||'Standard'})</div>
+          </div>
+          <span class="tag-badge pink">Rating ${f(p[8])}</span>
+        </div>
+
+        <div class="dossier-pills">
+          <div class="stat-pill"><b>#${p[16]}</b><span>Rank</span></div>
+          <div class="stat-pill"><b>${p[1]}</b><span>Pressure Balls</span></div>
+          <div class="stat-pill"><b>${p[9]==null?'n/a':Math.round(p[9]*100)+'%'}</b><span>Top-10 Stability</span></div>
+        </div>
+
+        <div style="margin:14px 0">
+          <div class="comp-metric">
+            <div class="comp-metric-header">
+              <span>${isBat?'Pressure Strike Rate':'Pressure Economy'}</span>
+              <strong style="color:var(--rr-pink)">${isBat?f(st?st[0]:0,0):f(st?st[0]:0,1)}</strong>
+            </div>
+            <div class="comp-metric-header" style="margin-top:6px">
+              <span>${isBat?'Normal Strike Rate':'Normal Economy'}</span>
+              <span style="color:var(--mute)">${isBat?f(st?st[1]:0,0):f(st?st[1]:0,1)}</span>
+            </div>
+          </div>
+
+          <div class="comp-metric">
+            <div class="comp-metric-header">
+              <span>${isBat?'Dismissal Rate / 100b':'Wickets / 100b'}</span>
+              <strong style="color:var(--rr-blue)">${f(st?st[2]:0,1)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout-box" style="margin-top:12px;font-size:12px">
+          <div><strong>Death Overs Workload:</strong> ${st?st[4]:'n/a'}%</div>
+          <div><strong>Chase Distribution:</strong> ${st?st[5]:'n/a'}%</div>
+          <div style="margin-top:6px"><strong>Raw Impact WPA:</strong> ${p[12]} bp/100b</div>
+          <div><strong>Resilience Score:</strong> ${p[14]}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Tactical verdict
+  let verdictText="";
+  if(compP1==="Tim David"&&compP2==="Ashutosh Sharma"){
+    verdictText="<strong>Tactical War-Room Verdict:</strong> <em>Tim David</em> is the superior, proven international finisher with 475 pressure deliveries and an astounding 74.4 rating. However, he demands an Overseas Slot. <em>Ashutosh Sharma</em> (59.7 rating, 193.0 pressure SR) is the premium Domestic Indian alternative; securing Ashutosh at #7 allows RR to deploy their 4th overseas spot on an express pacer like Josh Hazlewood.";
+  }else{
+    const leader=p1Obj[8]>=p2Obj[8]?p1Obj[0]:p2Obj[0];
+    verdictText=`<strong>Model Comparison Verdict:</strong> <strong>${leader}</strong> leads this face-off on composite clutch index (${f(Math.max(p1Obj[8],p2Obj[8]))} vs ${f(Math.min(p1Obj[8],p2Obj[8]))}) and situational reliability.`;
+  }
+
+  $("#viewContainer").innerHTML=`
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Head-to-Head Tactical Player Compare</span>
+          <span class="badge-sub">Side-by-Side Scout Audit</span>
+        </div>
+      </div>
+
+      <div class="compare-selector-bar">
+        <div>
+          <label style="font-size:11.5px;font-weight:700;color:var(--mute);display:block;margin-bottom:4px">SELECT FIRST PLAYER:</label>
+          <select class="select-input" id="p1Select">
+            ${allPlayers.map(name=>`<option value="${name}" ${name===compP1?'selected':''}>${name}</option>`).join("")}
+          </select>
+        </div>
+        <div class="vs-circle">VS</div>
+        <div>
+          <label style="font-size:11.5px;font-weight:700;color:var(--mute);display:block;margin-bottom:4px">SELECT SECOND PLAYER:</label>
+          <select class="select-input" id="p2Select">
+            ${allPlayers.map(name=>`<option value="${name}" ${name===compP2?'selected':''}>${name}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+
+      <div class="callout-box info" style="margin-bottom:18px">
+        ${verdictText}
+      </div>
+
+      <div class="compare-grid">
+        ${getCardHTML(p1Obj,isP1Bat)}
+        ${getCardHTML(p2Obj,isP2Bat)}
+      </div>
+    </div>
+  `;
+
+  $("#p1Select").onchange=e=>{
+    compP1=e.target.value;
+    viewComparisonTool();
+  };
+  $("#p2Select").onchange=e=>{
+    compP2=e.target.value;
+    viewComparisonTool();
+  };
+}
+
+/**
+ * TARGET AUCTION BOARD FOR RAJASTHAN ROYALS
+ */
+function viewAuctionBoard(){
+  const rows=BD.map(([role,name,tier,tacticalRole,why,risk])=>{
+    const p=D[role].find(x=>x[0]===name)||[name,0,0,0,0,0,0,0,50,0.5,[0,0,0,0,0,0],"—",0,0,0,0,"-"];
+    const isTier1=tier.includes("Tier 1");
+    const isStretch=tier.includes("Stretch");
+    const badgeColor=isTier1?"pink":(isStretch?"gold":"blue");
+
+    return `
+      <tr>
+        <td><span class="tag-badge ${badgeColor}">${tier}</span></td>
+        <td>
+          <strong style="font-size:14px">${name}</strong>
+          <div style="font-size:11.5px;color:var(--mute)">${p[11]} • ${role==="bat"?"Batter":"Bowler"} (${tacticalRole})</div>
+        </td>
+        <td class="num" style="font-size:13px">
+          #${p[16]} <span style="color:var(--mute)">(${f(p[8])})</span>
+        </td>
+        <td class="num">${p[9]==null?'n/a':Math.round(p[9]*100)+'%'}</td>
+        <td style="font-size:12.5px;line-height:1.4">${why}</td>
+        <td style="font-size:12px;color:var(--mute);line-height:1.4">${risk}</td>
+      </tr>
+    `;
+  }).join("");
+
+  $("#viewContainer").innerHTML=`
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Official RR Auction Board & Target Prioritization Matrix</span>
+          <span class="badge-sub">IPL 2027 Mega-Auction</span>
+        </div>
+      </div>
+
+      <div class="callout-box gold" style="margin-bottom:14px">
+        <strong>Auction War-Room Strategy Memo:</strong> 
+        Rajasthan Royals must enter the auction with disciplined paddle limits. The roster objective is to address the <strong>finishing strike-rate deficit (Overs 16–20)</strong> and acquire a <strong>lead death wicket-taker</strong>. Because overseas slots are capped at 8 per squad (4 in the XI), our primary tactical strategy is to target domestic Indian finishers (Ashutosh Sharma) to preserve overseas purse and slots for world-class pace (Josh Hazlewood / Nathan Ellis).
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Priority Tier</th>
+              <th>Target Player</th>
+              <th>Model Rank / Rating</th>
+              <th>Resample Stability</th>
+              <th>Tactical Fit & Rationale</th>
+              <th>Risk Assessment & Bid Ceiling</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * EMERGING SCUTING LEADS
+ */
+function viewEmergingScouting(){
+  const cards=D.young.map(y=>{
+    const isThin=y[3]<75||y[5]<6;
+    const isRR=y[2]==="RR";
+    return `
+      <div class="scout-card" style="${isRR?'border-color:var(--rr-pink);background:var(--rr-pink-soft)':''}">
+        <div class="scout-card-top">
+          <div>
+            <div class="scout-name">${y[0]} ${isRR?'<span class="tag-badge pink">RR Retained</span>':''}</div>
+            <div class="scout-role">${y[1]==="bat"?"Batter":"Bowler"} • ${y[2]} • Debut ${y[6]}</div>
+          </div>
+          <div class="scout-score">${f(y[11],0)}</div>
+        </div>
+
+        <div style="font-size:12px;color:var(--ink-secondary);margin:8px 0">
+          <strong>Leverage Sample:</strong> ${y[3]} pressure balls (${y[4]} in IPL) across ${y[5]} pressure innings.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--mute);background:var(--surf-alt);padding:6px 8px;border-radius:6px">
+          <div>Impact WPA: <strong style="color:var(--ink)">${f(y[7],0)}</strong></div>
+          <div>Baseline: <strong style="color:var(--ink)">${f(y[8],0)}</strong></div>
+          <div>Resilience: <strong style="color:var(--ink)">${f(y[9],0)}</strong></div>
+          <div>Consistency: <strong style="color:var(--ink)">${f(y[10],0)}%</strong></div>
+        </div>
+
+        ${isThin?`
+          <div style="margin-top:8px;font-size:11px;color:var(--rr-warn);font-weight:600">
+            [Scouting Note] Early statistical signal; developmental lead.
+          </div>
+        `:`
+          <div style="margin-top:8px;font-size:11px;color:var(--rr-teal);font-weight:600">
+            [Verified] Solid emerging sample; immediate priority.
+          </div>
+        `}
+      </div>
+    `;
+  }).join("");
+
+  $("#viewContainer").innerHTML=`
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Emerging & Uncapped Talent Scouting Watchlist</span>
+          <span class="badge-sub">High-Upside Leads</span>
+        </div>
+      </div>
+
+      <div class="callout-box info" style="margin-bottom:16px">
+        <strong>Scouting Cell Directive:</strong> Filtered from players who debuted since mid-2024 or represented Emerging Teams tournaments. Evaluated under the same Win Probability Leverage framework with an early-entry threshold (25 leverage balls, 15 IPL). 
+        <em>Notice: 14-year-old phenom Vaibhav Sooryavanshi (77.3 Clutch Index) is already secured within Rajasthan Royals.</em>
+      </div>
+
+      <div class="scout-cards-grid">${cards}</div>
+    </div>
+  `;
+}
+
+/**
+ * RR EXPOSURE & TACTICAL GAPS
+ */
+function viewRRExposure(){
+  function makeBar(rrVals, leagueVals, labels){
+    const maxVal=Math.max(...rrVals,...leagueVals)*1.2;
+    return `
+      <div style="height:150px;display:flex;align-items:flex-end;gap:12px;padding:10px 0 4px">
+        ${labels.map((lbl,i)=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end">
+            <div style="display:flex;gap:4px;align-items:flex-end;width:80%;height:100%;justify-content:center">
+              <div style="width:42%;height:${(rrVals[i]/maxVal)*100}%;background:var(--rr-pink);border-radius:4px 4px 0 0" title="RR: ${rrVals[i]}">
+                <span style="font-size:9.5px;color:#fff;display:block;text-align:center;margin-top:2px">${rrVals[i]}</span>
+              </div>
+              <div style="width:42%;height:${(leagueVals[i]/maxVal)*100}%;background:var(--rr-steel);border-radius:4px 4px 0 0" title="IPL Average: ${leagueVals[i]}">
+                <span style="font-size:9.5px;color:#fff;display:block;text-align:center;margin-top:2px">${leagueVals[i]}</span>
+              </div>
+            </div>
+            <span style="font-size:11px;color:var(--mute);margin-top:6px;font-weight:600">${lbl}</span>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  const makeRRTable=k=>`
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Pressure Balls</th>
+            <th>Rank in Pool</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${D.rr[k].map(x=>`
+            <tr>
+              <td><strong>${x[0]}</strong></td>
+              <td class="num">${x[2]}</td>
+              <td><span class="tag-badge ${x[1]<=25?'teal':'gold'}">#${x[1]} of ${D.rr.n[k]}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  $("#viewContainer").innerHTML=`
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Rajasthan Royals Tactical Gaps & Existing Squad Audit</span>
+        </div>
+        <div class="legend" style="margin:0">
+          <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-pink)"></i> Rajasthan Royals</span>
+          <span class="legend-item"><i class="legend-dot" style="--c:var(--rr-steel)"></i> IPL Benchmark Avg</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="callout-box" style="background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--rr-pink)">
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--ink)">Batting Strike Rate in High Leverage by Batting Position (2025–26)</h4>
+          ${makeBar([181.6,159.9,157.0,143.8],[172.0,165.3,165.4,139.6],["Top (1-3)","Middle (4-5)","Finish (6-7)","Tail (8-11)"])}
+          <p style="font-size:12px;color:var(--mute);margin-top:8px">
+            <strong>Tactical Deficit 1 (Finishing Slump):</strong> RR top order outperforms (+9.6 SR), but the finishing tier (6–7) trails by <strong>-8.4 SR</strong>, proving our middle-order finish is the team's Achilles heel.
+          </p>
+        </div>
+
+        <div class="callout-box" style="background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--rr-blue)">
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--ink)">Bowling Wickets / 100 Balls in High Leverage by Phase (2022–26)</h4>
+          ${makeBar([3.73,5.28,7.28],[5.19,4.69,8.27],["Powerplay","Middle (7-15)","Death (16-20)"])}
+          <p style="font-size:12px;color:var(--mute);margin-top:8px">
+            <strong>Tactical Deficit 2 (Death Bowling Wickets):</strong> RR takes <strong>7.28 wickets/100 balls</strong> at the death versus league average <strong>8.27</strong>. Resolving this requires an overseas strike seamer.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:8px">RR Batters Roster Exposure</h3>
+          ${makeRRTable("bat")}
+        </div>
+        <div>
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:8px">RR Bowlers Roster Exposure</h3>
+          ${makeRRTable("bowl")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * METHODOLOGY, RIGOR & STATISTICAL INTEGRITY
+ */
+function viewMethodology(){
+  const bootRows=(k)=>D.boot[k].map(x=>`
+    <tr>
+      <td><strong>${x[0]}</strong></td>
+      <td>
+        <div class="resample-track">
+          <div class="resample-range" style="left:${x[2]/40*100}%;width:${Math.max((x[3]-x[2])/40*100,3)}%"></div>
+          <div class="resample-median" style="left:${x[1]/40*100}%" title="Median Rank: #${x[1]}"></div>
+        </div>
+      </td>
+      <td class="num">${Math.round(x[4]*100)}%</td>
+      <td class="num">${Math.round(x[5]*100)}%</td>
+    </tr>
+  `).join("");
+
+  const sensRows=D.sens.labels.map((l,i)=>`
+    <tr>
+      <td>${l}</td>
+      <td class="num" style="color:var(--rr-pink);font-weight:700">${D.sens.bat[i]} / 10</td>
+      <td class="num" style="color:var(--rr-blue);font-weight:700">${D.sens.bowl[i]} / 10</td>
+    </tr>
+  `).join("");
+
+  $("#viewContainer").innerHTML=`
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>Mathematical Architecture & Scientific Verification</span>
+          <span class="badge-sub">Empirical Validation</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="callout-box" style="background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--rr-pink)">
+          <h4 style="font-size:14px;font-weight:800;margin-bottom:6px;color:var(--ink)">Win Probability Modeling Pipeline</h4>
+          <ul style="padding-left:18px;font-size:12.5px;color:var(--ink-secondary);line-height:1.6">
+            <li><strong>Leverage Index (LI):</strong> Calculated as the expected win probability swing on the upcoming delivery relative to average match swing.</li>
+            <li><strong>High-Leverage Cutoff:</strong> Filtered to the top 20% leverage deliveries in each innings, ensuring balanced representation across chases and first-innings totals.</li>
+            <li><strong>Machine Learning Backbone:</strong> Out-of-fold Gradient Boosted Trees trained on ball-by-ball state variables (balls remaining, wickets in hand, runs required, venue run environment).</li>
+            <li><strong>Validation Performance:</strong> Chase Win Probability AUC = <strong>0.89</strong>; 1st Innings AUC = <strong>0.67</strong> (consistent with intrinsic baseline uncertainty).</li>
+          </ul>
+        </div>
+
+        <div class="callout-box" style="background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--rr-blue)">
+          <h4 style="font-size:14px;font-weight:800;margin-bottom:6px;color:var(--ink)">The 4-Pillar Valuation Architecture</h4>
+          <div class="table-wrap">
+            <table class="data-table" style="font-size:12px">
+              <thead>
+                <tr>
+                  <th>Pillar</th>
+                  <th>Default Weight</th>
+                  <th>Metric Formulation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>P1: Impact WPA</strong></td>
+                  <td class="num">35%</td>
+                  <td>Empirical Win Probability Added per leverage ball (Bayesian shrunk).</td>
+                </tr>
+                <tr>
+                  <td><strong>P2: Baseline Quality</strong></td>
+                  <td class="num">25%</td>
+                  <td>Net runs above expected across all normal non-leverage deliveries.</td>
+                </tr>
+                <tr>
+                  <td><strong>P3: Resilience Delta</strong></td>
+                  <td class="num">15%</td>
+                  <td>Performance differential: high-leverage execution minus player baseline.</td>
+                </tr>
+                <tr>
+                  <td><strong>P4: Consistency Hit</strong></td>
+                  <td class="num">25%</td>
+                  <td>Percentage of pressure spells/innings producing positive net WPA.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split-half Reliability & Domain Realism -->
+      <div class="callout-box gold">
+        <h4 style="font-size:14px;font-weight:800;margin-bottom:4px;color:var(--ink)">Cricket Domain Realism: The Split-Half Persistence Paradox</h4>
+        <p style="font-size:12.5px;line-height:1.6;color:var(--ink-secondary)">
+          A major analytical contribution of this work is recognizing the divergence in split-half correlation: 
+          <strong>Batting clutch persistence is r = 0.07</strong>, whereas <strong>bowling clutch persistence is r = 0.31</strong>. 
+          Death batting at >180 SR is inherently stochastic (a boundary vs an edge to short third is separated by millimeters). Consequently, <strong>batters in ranks 5 to 15 must be treated as a fluid tactical tier</strong> rather than strict hierarchical orders. Conversely, bowling execution (yorker landing, back-of-the-hand slower balls) demonstrates genuine skill repeatability, justifying aggressive auction expenditure on elite death bowlers like Bumrah and Hazlewood.
+        </p>
+      </div>
+
+      <!-- Sensitivity & Bootstrap -->
+      <div class="panel" style="margin-bottom:18px">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Model Sensitivity & Specification Robustness (Top-10 Overlap)</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Model Specification Variant</th>
+                <th>Batters Top-10 Persistence</th>
+                <th>Bowlers Top-10 Persistence</th>
+              </tr>
+            </thead>
+            <tbody>${sensRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>Batters Rank Stability (150 Resamples)</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>10th-90th Pct Spread</th>
+                  <th>Top 10 %</th>
+                  <th>Top 5 %</th>
+                </tr>
+              </thead>
+              <tbody>${bootRows("bat")}</tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>Bowlers Rank Stability (150 Resamples)</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>10th-90th Pct Spread</th>
+                  <th>Top 10 %</th>
+                  <th>Top 5 %</th>
+                </tr>
+              </thead>
+              <tbody>${bootRows("bowl")}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * MASTER ROUTER & THEME CONTROLLER
+ */
+function render(){
+  initTabs();
+  switch(curTab){
+    case "ov": viewOverview(); break;
+    case "bat": viewRankModel("bat"); break;
+    case "bowl": viewRankModel("bowl"); break;
+    case "scatter": viewScatterMatrix(); break;
+    case "compare": viewComparisonTool(); break;
+    case "board": viewAuctionBoard(); break;
+    case "young": viewEmergingScouting(); break;
+    case "rr": viewRRExposure(); break;
+    case "me": viewMethodology(); break;
+    default: viewOverview();
+  }
+}
+
+// Theme Toggle
+const themeBtn=$("#themeBtn");
+if(themeBtn){
+  themeBtn.onclick=()=>{
+    const root=document.documentElement;
+    const isDark=root.dataset.theme==="dark"||(!root.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);
+    root.dataset.theme=isDark?"light":"dark";
+    const tt=$("#themeText");
+    if(tt) tt.textContent=isDark?"Theme: Dark":"Theme: Light";
+  };
+}
+
+// Print Handler
+const printBtn=$("#printBtn");
+if(printBtn){
+  printBtn.onclick=()=>window.print();
+}
+
+// Initial Boot
+render();
+</script>
+</body>
+</html>
