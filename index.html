@@ -1055,21 +1055,98 @@
       border: 2px solid var(--surf);
     }
 
-    /* Search Box */
-    .search-box {
-      padding: 8px 12px;
+    /* Search Box & Wrapper with RR Logo */
+    .search-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .search-wrapper .rr-search-icon {
+      position: absolute;
+      left: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .search-wrapper .search-box {
+      padding: 8px 12px 8px 36px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--surf);
       color: var(--ink);
       font: 13px var(--font-sans);
-      min-width: 220px;
+      min-width: 200px;
       outline: none;
+      transition: all 0.2s ease;
     }
 
-    .search-box:focus {
+    .search-wrapper .search-box:focus {
       border-color: var(--rr-pink);
       box-shadow: 0 0 0 2px var(--rr-pink-soft);
+    }
+
+    /* Top Masthead Global Search */
+    .header-search {
+      position: relative;
+    }
+
+    .header-search .search-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      padding: 6px 12px 6px 34px;
+      font-size: 12px;
+      border-radius: 20px;
+      width: 250px;
+      min-width: 200px;
+      transition: all 0.25s ease;
+    }
+
+    .header-search .search-box::placeholder {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .header-search .search-box:focus {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #FFB3DC;
+      box-shadow: 0 0 0 2px rgba(225, 1, 116, 0.4);
+      width: 290px;
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 320px;
+      max-height: 380px;
+      overflow-y: auto;
+      background: var(--surf);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      padding: 6px;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12.5px;
+      color: var(--ink);
+      transition: background 0.15s ease;
+    }
+
+    .search-result-item:hover {
+      background: var(--rr-pink-soft);
+      color: var(--rr-pink);
     }
 
     /* Footer */
@@ -1427,12 +1504,21 @@
     <header class="masthead">
       <div class="masthead-top">
         <div class="badge-club">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
+          <img src="https://upload.wikimedia.org/wikipedia/en/5/5c/This_is_the_logo_for_Rajasthan_Royals%2C_a_cricket_team_playing_in_the_Indian_Premier_League_%28IPL%29.svg" alt="Rajasthan Royals Logo" class="rr-logo-img" style="width:22px;height:22px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <svg class="rr-crest-svg" style="display:none;width:20px;height:20px" viewBox="0 0 36 36" fill="none"><path d="M18 34C18 34 31 28 31 16V6L18 2L5 6V16C5 28 18 34 18 34Z" fill="#E10174" stroke="#FFD700" stroke-width="1.8"/><path d="M12 11.5L14 13.5L18 9.5L22 13.5L24 11.5L23 16H13L12 11.5Z" fill="#FFD700"/><path d="M13 18.5V26M13 18.5H16.5C17.6 18.5 18.5 19.3 18.5 20.3C18.5 21.4 17.6 22.2 16.5 22.2H13M16 22.2L18.5 26" stroke="#FFFFFF" stroke-width="1.8"/></svg>
           Rajasthan Royals // SupeRR Selector Season 2
         </div>
         <div class="masthead-actions">
+          <!-- Global Search with RR Logo on Top Masthead -->
+          <div class="search-wrapper header-search">
+            <span class="rr-search-icon">
+              <img src="https://upload.wikimedia.org/wikipedia/en/5/5c/This_is_the_logo_for_Rajasthan_Royals%2C_a_cricket_team_playing_in_the_Indian_Premier_League_%28IPL%29.svg" alt="RR" class="rr-logo-img" style="width:18px;height:18px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+              <svg class="rr-crest-svg" style="display:none;width:16px;height:16px" viewBox="0 0 36 36" fill="none"><path d="M18 34C18 34 31 28 31 16V6L18 2L5 6V16C5 28 18 34 18 34Z" fill="#E10174" stroke="#FFD700" stroke-width="1.8"/><path d="M13 18.5V26M13 18.5H16.5C17.6 18.5 18.5 19.3 18.5 20.3C18.5 21.4 17.6 22.2 16.5 22.2H13M16 22.2L18.5 26" stroke="#FFFFFF" stroke-width="1.8"/></svg>
+            </span>
+            <input type="text" class="search-box" id="globalPlayerSearch" placeholder="Search player (e.g. Jaiswal, Bumrah, Nizar)..." autocomplete="off">
+            <div id="globalSearchResults" class="search-dropdown" style="display:none"></div>
+          </div>
+
           <a href="SupeRR_Selector_Methodology_Report.html" target="_blank" class="btn-util"
             style="text-decoration:none">
             Methodology Report (Doc)
@@ -1540,6 +1626,103 @@
       ["rr", "RR Exposure & Deficits"],
       ["me", "Methodology & Rigor"]
     ];
+
+    // Rajasthan Royals Logo & Crest Badge Helper for Search Bars
+    function getRRSearchIconHTML(size = 18) {
+      return `
+        <span class="rr-search-icon" title="Rajasthan Royals">
+          <img src="https://upload.wikimedia.org/wikipedia/en/5/5c/This_is_the_logo_for_Rajasthan_Royals%2C_a_cricket_team_playing_in_the_Indian_Premier_League_%28IPL%29.svg" alt="RR" class="rr-logo-img" style="width:${size}px;height:${size}px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <svg class="rr-crest-svg" style="display:none;width:${size}px;height:${size}px" viewBox="0 0 36 36" fill="none"><path d="M18 34C18 34 31 28 31 16V6L18 2L5 6V16C5 28 18 34 18 34Z" fill="#E10174" stroke="#FFD700" stroke-width="1.8"/><path d="M12 11.5L14 13.5L18 9.5L22 13.5L24 11.5L23 16H13L12 11.5Z" fill="#FFD700"/><path d="M13 18.5V26M13 18.5H16.5C17.6 18.5 18.5 19.3 18.5 20.3C18.5 21.4 17.6 22.2 16.5 22.2H13M16 22.2L18.5 26" stroke="#FFFFFF" stroke-width="1.8"/></svg>
+        </span>
+      `;
+    }
+
+    function initGlobalSearch() {
+      const inp = $("#globalPlayerSearch");
+      const res = $("#globalSearchResults");
+      if (!inp || !res) return;
+
+      function getAllSearchablePlayers() {
+        const list = [];
+        D.bat.forEach(b => list.push({ name: b[0], role: "bat", roleLabel: "Batter", team: b[11], score: b[8], rank: `#${b[16]}` }));
+        D.bowl.forEach(b => list.push({ name: b[0], role: "bowl", roleLabel: "Bowler", team: b[11], score: b[8], rank: `#${b[16]}` }));
+        D.young.forEach(y => {
+          if (!list.some(x => x.name === y[0])) {
+            list.push({ name: y[0], role: "young", roleLabel: "Uncapped " + (y[1] === "bat" ? "Batter" : "Bowler"), team: y[2], score: y[11], rank: "Uncapped" });
+          }
+        });
+        if (typeof SCOUTED_GEMS !== "undefined") {
+          SCOUTED_GEMS.forEach(g => {
+            if (!list.some(x => x.name === g.name)) {
+              list.push({ name: g.name, role: "scout", roleLabel: g.isOS ? "Overseas Gem" : "Domestic Gem", team: g.team, score: g.clutchScore, rank: "Scouted" });
+            }
+          });
+        }
+        return list;
+      }
+
+      inp.addEventListener("input", (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        if (!q) {
+          res.style.display = "none";
+          res.innerHTML = "";
+          return;
+        }
+
+        const allPlayers = getAllSearchablePlayers();
+        const matches = allPlayers.filter(p => p.name.toLowerCase().includes(q) || (p.team && p.team.toLowerCase().includes(q))).slice(0, 8);
+        if (matches.length === 0) {
+          res.innerHTML = `<div style="padding:10px;font-size:12px;color:var(--mute);text-align:center">No players matching "${e.target.value}"</div>`;
+          res.style.display = "block";
+          return;
+        }
+
+        res.innerHTML = matches.map(m => `
+          <div class="search-result-item" onclick="selectFromGlobalSearch('${m.name}', '${m.role}')">
+            <div>
+              <div style="font-weight:700;color:var(--ink)">${m.name}</div>
+              <div style="font-size:11px;color:var(--mute)">${m.roleLabel} • ${m.team}</div>
+            </div>
+            <div style="text-align:right">
+              <span class="tag-badge pink" style="font-size:10px">${m.rank}</span>
+              <div style="font-size:12px;font-weight:800;color:var(--rr-pink);margin-top:2px">${f(m.score, 1)}</div>
+            </div>
+          </div>
+        `).join("");
+        res.style.display = "block";
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!inp.contains(e.target) && !res.contains(e.target)) {
+          res.style.display = "none";
+        }
+      });
+    }
+
+    function selectFromGlobalSearch(name, role) {
+      const res = $("#globalSearchResults");
+      const inp = $("#globalPlayerSearch");
+      if (res) res.style.display = "none";
+      if (inp) inp.value = "";
+
+      if (role === "bat" || role === "bowl") {
+        curTab = role;
+        renderNav();
+        renderView();
+        const R = getRanked(role);
+        selIdx = R.findIndex(x => x[0] === name);
+        if (selIdx < 0) selIdx = 0;
+        selectPlayer(selIdx);
+        const row = document.querySelector(`.roster-row[data-idx="${selIdx}"]`);
+        if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (role === "young") {
+        curTab = "young";
+        renderNav();
+        renderView();
+      } else if (role === "scout") {
+        setSimTargetAndJump(name);
+      }
+    }
 
     // Step 3: Inline SVG Sparkline Generator & Percentile Analytics
     function renderSparkline(values, strokeColor = "var(--rr-pink)", width = 48, height = 16, isFill = true) {
@@ -1982,7 +2165,10 @@ function openDeepCompareFromDock() {
             <span>${label} Clutch Valuation Engine</span>
             <span class="badge-sub">Live Multi-Pillar Tuner</span>
           </div>
-          <input type="text" class="search-box" id="rosterSearch" placeholder="Filter ${role}s..." style="width:180px">
+          <div class="search-wrapper">
+            ${getRRSearchIconHTML(18)}
+            <input type="text" class="search-box" id="rosterSearch" placeholder="Filter ${role}s..." style="width:200px">
+          </div>
         </div>
 
         <!-- Strategy Presets -->
@@ -2499,7 +2685,10 @@ function openDeepCompareFromDock() {
           <span class="badge-sub" id="matrixSubBadge">${isBat ? '55 Batters' : '64 Bowlers'}</span>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <input type="text" class="search-box" id="matrixSearch" placeholder="Search player or team..." value="${matrixQuery}" style="width:220px">
+          <div class="search-wrapper">
+            ${getRRSearchIconHTML(18)}
+            <input type="text" class="search-box" id="matrixSearch" placeholder="Search player or team..." value="${matrixQuery}" style="width:230px">
+          </div>
           <div style="display:flex;gap:6px">
             <button class="btn-preset ${scatterRole === 'bat' ? 'active' : ''}" style="${scatterRole === 'bat' ? 'background:var(--rr-pink);color:#fff;border-color:var(--rr-pink)' : ''}" id="btnScatterBat">Batters</button>
             <button class="btn-preset ${scatterRole === 'bowl' ? 'active' : ''}" style="${scatterRole === 'bowl' ? 'background:var(--rr-pink);color:#fff;border-color:var(--rr-pink)' : ''}" id="btnScatterBowl">Bowlers</button>
@@ -4138,6 +4327,7 @@ function openDeepCompareFromDock() {
     // Initial Boot
     updateStickyCompareBar();
     render();
+    initGlobalSearch();
   </script>
 
 <!-- Step 2: Sticky Head-to-Head Compare Dock -->
